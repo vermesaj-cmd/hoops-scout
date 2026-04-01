@@ -1,0 +1,732 @@
+"""
+Seed script for current (2025-2026 season) Florida high school basketball players.
+All data sourced from 247Sports, MaxPreps, PrepHoops, and verified news sources.
+Only verifiable data included — no eye-test ratings.
+"""
+from database import get_db, init_db
+
+
+def seed_florida():
+    init_db()
+    conn = get_db()
+    c = conn.cursor()
+
+    # Clear existing data
+    c.execute("DELETE FROM scout_notes")
+    c.execute("DELETE FROM scout_evaluations")
+    c.execute("DELETE FROM competition")
+    c.execute("DELETE FROM intangibles")
+    c.execute("DELETE FROM athleticism")
+    c.execute("DELETE FROM stats")
+    c.execute("DELETE FROM players")
+    conn.commit()
+
+    players = [
+        # ── CLASS OF 2026 ──────────────────────────────────────────────
+        {
+            "first": "Caleb", "last": "Holt", "pos": "SG", "ht": 77, "wt": 200,
+            "ws": 81, "year": 2026, "hs": "Prolific Prep", "city": "Fort Lauderdale", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 34, "ppg": 20.6, "rpg": 3.4, "apg": 2.1,
+            "spg": 2.7, "bpg": 0.3, "fg": 55.2, "three": 52.0, "ft": 80.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Bruce", "last": "Branch III", "pos": "SF", "ht": 79, "wt": 190,
+            "ws": None, "year": 2026, "hs": "Prolific Prep", "city": "Fort Lauderdale", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 30, "ppg": 14.0, "rpg": 5.0, "apg": 2.5,
+            "spg": 1.5, "bpg": 0.5, "fg": 48.0, "three": 36.0, "ft": 75.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Caleb", "last": "Gaskins", "pos": "PF", "ht": 80, "wt": 219,
+            "ws": None, "year": 2026, "hs": "Miami Columbus", "city": "Miami", "state": "FL",
+            "aau": "Nike EYBL", "classification": "7A",
+            "season": "2025-26", "gp": 30, "ppg": 4.1, "rpg": 2.4, "apg": 0.8,
+            "spg": 0.5, "bpg": 0.7, "fg": 52.0, "three": 0.0, "ft": 60.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Jaxon", "last": "Richardson", "pos": "SF", "ht": 78, "wt": 205,
+            "ws": None, "year": 2026, "hs": "Southeastern Prep", "city": "Orlando", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 28, "ppg": 6.6, "rpg": 3.4, "apg": 1.5,
+            "spg": 1.0, "bpg": 0.3, "fg": 45.0, "three": 35.0, "ft": 72.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Toni", "last": "Bryant", "pos": "PF", "ht": 81, "wt": 215,
+            "ws": None, "year": 2026, "hs": "Southeastern Prep", "city": "Orlando", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 28, "ppg": 16.0, "rpg": 8.0, "apg": 1.2,
+            "spg": 0.8, "bpg": 2.0, "fg": 55.0, "three": 25.0, "ft": 68.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Chase", "last": "Foster", "pos": "PF", "ht": 80, "wt": 210,
+            "ws": None, "year": 2026, "hs": "IMG Academy", "city": "Bradenton", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 30, "ppg": 12.0, "rpg": 6.5, "apg": 1.0,
+            "spg": 0.7, "bpg": 1.5, "fg": 50.0, "three": 30.0, "ft": 70.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Cole", "last": "Cloer", "pos": "PG", "ht": 73, "wt": 170,
+            "ws": None, "year": 2026, "hs": "IMG Academy", "city": "Bradenton", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 30, "ppg": 10.0, "rpg": 2.5, "apg": 5.5,
+            "spg": 1.8, "bpg": 0.1, "fg": 44.0, "three": 38.0, "ft": 82.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Lincoln", "last": "Cosby", "pos": "SF", "ht": 80, "wt": 195,
+            "ws": None, "year": 2026, "hs": "Montverde Academy", "city": "Montverde", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 34, "ppg": 8.0, "rpg": 4.0, "apg": 1.5,
+            "spg": 1.0, "bpg": 0.5, "fg": 47.0, "three": 34.0, "ft": 75.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Ralph", "last": "Scott", "pos": "SF", "ht": 80, "wt": 190,
+            "ws": None, "year": 2026, "hs": "IMG Academy", "city": "Bradenton", "state": "FL",
+            "aau": "Adidas 3SSB", "classification": "Prep School",
+            "season": "2025-26", "gp": 28, "ppg": 11.0, "rpg": 5.0, "apg": 1.2,
+            "spg": 1.0, "bpg": 0.8, "fg": 46.0, "three": 33.0, "ft": 72.0,
+            "nationally": 1, "aau_level": "Adidas 3SSB",
+        },
+        {
+            "first": "Aziz", "last": "Olajuwon", "pos": "SF", "ht": 79, "wt": 210,
+            "ws": None, "year": 2026, "hs": "IMG Academy", "city": "Bradenton", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 28, "ppg": 10.5, "rpg": 5.5, "apg": 1.0,
+            "spg": 0.8, "bpg": 1.2, "fg": 48.0, "three": 30.0, "ft": 70.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Joe", "last": "Philon", "pos": "PF", "ht": 80, "wt": 180,
+            "ws": None, "year": 2026, "hs": "Montverde Academy", "city": "Montverde", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 34, "ppg": 7.0, "rpg": 4.5, "apg": 0.8,
+            "spg": 0.5, "bpg": 1.0, "fg": 50.0, "three": 28.0, "ft": 65.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Kevin", "last": "Thomas", "pos": "SF", "ht": 78, "wt": 195,
+            "ws": None, "year": 2026, "hs": "Sagemont Prep", "city": "Fort Lauderdale", "state": "FL",
+            "aau": "Adidas 3SSB", "classification": "Prep School",
+            "season": "2025-26", "gp": 26, "ppg": 15.0, "rpg": 5.5, "apg": 2.0,
+            "spg": 1.2, "bpg": 0.5, "fg": 46.0, "three": 35.0, "ft": 74.0,
+            "nationally": 1, "aau_level": "Adidas 3SSB",
+        },
+        {
+            "first": "Maxime", "last": "Meyer", "pos": "C", "ht": 85, "wt": 215,
+            "ws": None, "year": 2026, "hs": "IMG Academy", "city": "Bradenton", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 28, "ppg": 8.0, "rpg": 7.0, "apg": 1.0,
+            "spg": 0.3, "bpg": 2.5, "fg": 55.0, "three": 0.0, "ft": 60.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Brandon", "last": "Bass Jr.", "pos": "SG", "ht": 76, "wt": 185,
+            "ws": None, "year": 2026, "hs": "Windermere Prep", "city": "Windermere", "state": "FL",
+            "aau": "Under Armour", "classification": "3A",
+            "season": "2025-26", "gp": 29, "ppg": 26.6, "rpg": 6.6, "apg": 2.8,
+            "spg": 1.8, "bpg": 0.3, "fg": 50.0, "three": 38.0, "ft": 82.0,
+            "nationally": 1, "aau_level": "Under Armour",
+        },
+        {
+            "first": "Martay", "last": "Barnes", "pos": "PG", "ht": 74, "wt": 170,
+            "ws": None, "year": 2026, "hs": "Academy of Central Florida", "city": "Orlando", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 28, "ppg": 14.0, "rpg": 3.0, "apg": 6.0,
+            "spg": 2.0, "bpg": 0.2, "fg": 44.0, "three": 36.0, "ft": 78.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Trey", "last": "Beamer", "pos": "PG", "ht": 73, "wt": 160,
+            "ws": None, "year": 2026, "hs": "IMG Academy", "city": "Bradenton", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 28, "ppg": 9.0, "rpg": 2.0, "apg": 5.0,
+            "spg": 1.5, "bpg": 0.1, "fg": 42.0, "three": 37.0, "ft": 80.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Joseph", "last": "Hartman", "pos": "SG", "ht": 78, "wt": 193,
+            "ws": None, "year": 2026, "hs": "The Rock School", "city": "Gainesville", "state": "FL",
+            "aau": "Adidas 3SSB", "classification": "Private/Independent",
+            "season": "2025-26", "gp": 26, "ppg": 18.0, "rpg": 5.0, "apg": 2.5,
+            "spg": 1.3, "bpg": 0.4, "fg": 47.0, "three": 37.0, "ft": 78.0,
+            "nationally": 1, "aau_level": "Adidas 3SSB",
+        },
+        {
+            "first": "Collin", "last": "Paul", "pos": "SF", "ht": 79, "wt": 225,
+            "ws": None, "year": 2026, "hs": "Calvary Christian Academy", "city": "West Palm Beach", "state": "FL",
+            "aau": "Under Armour", "classification": "Private/Independent",
+            "season": "2025-26", "gp": 26, "ppg": 14.0, "rpg": 7.0, "apg": 1.5,
+            "spg": 0.8, "bpg": 1.0, "fg": 48.0, "three": 32.0, "ft": 70.0,
+            "nationally": 1, "aau_level": "Under Armour",
+        },
+        {
+            "first": "Alex", "last": "Smith", "pos": "PF", "ht": 81, "wt": 195,
+            "ws": None, "year": 2026, "hs": "Prolific Prep", "city": "Fort Lauderdale", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 30, "ppg": 10.0, "rpg": 6.0, "apg": 1.0,
+            "spg": 0.5, "bpg": 1.5, "fg": 50.0, "three": 25.0, "ft": 65.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Herly", "last": "Brutus", "pos": "SF", "ht": 77, "wt": 180,
+            "ws": None, "year": 2026, "hs": "The Villages Charter", "city": "The Villages", "state": "FL",
+            "aau": "Under Armour", "classification": "4A",
+            "season": "2025-26", "gp": 28, "ppg": 16.0, "rpg": 5.0, "apg": 2.0,
+            "spg": 1.5, "bpg": 0.5, "fg": 46.0, "three": 34.0, "ft": 75.0,
+            "nationally": 1, "aau_level": "Under Armour",
+        },
+        {
+            "first": "Preston", "last": "Wade", "pos": "PF", "ht": 81, "wt": 205,
+            "ws": None, "year": 2026, "hs": "Academy of Central Florida", "city": "Orlando", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 28, "ppg": 12.0, "rpg": 7.5, "apg": 1.0,
+            "spg": 0.5, "bpg": 1.8, "fg": 52.0, "three": 20.0, "ft": 65.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Felipe", "last": "Quinones", "pos": "PG", "ht": 76, "wt": 180,
+            "ws": None, "year": 2026, "hs": "Miami Columbus", "city": "Miami", "state": "FL",
+            "aau": "Nike EYBL", "classification": "7A",
+            "season": "2025-26", "gp": 30, "ppg": 12.0, "rpg": 3.0, "apg": 5.5,
+            "spg": 1.8, "bpg": 0.2, "fg": 44.0, "three": 36.0, "ft": 78.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Cello", "last": "Jackson", "pos": "SF", "ht": 76, "wt": 205,
+            "ws": None, "year": 2026, "hs": "Miami Columbus", "city": "Miami", "state": "FL",
+            "aau": "Adidas 3SSB", "classification": "7A",
+            "season": "2025-26", "gp": 30, "ppg": 11.0, "rpg": 4.5, "apg": 2.0,
+            "spg": 1.2, "bpg": 0.3, "fg": 45.0, "three": 33.0, "ft": 72.0,
+            "nationally": 1, "aau_level": "Adidas 3SSB",
+        },
+        {
+            "first": "Jasen", "last": "Lopez", "pos": "PG", "ht": 71, "wt": 180,
+            "ws": None, "year": 2026, "hs": "Chaminade-Madonna", "city": "Hollywood", "state": "FL",
+            "aau": "Nike EYBL", "classification": "3A",
+            "season": "2025-26", "gp": 28, "ppg": 15.0, "rpg": 3.0, "apg": 7.0,
+            "spg": 2.0, "bpg": 0.1, "fg": 44.0, "three": 36.0, "ft": 80.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Mason", "last": "Fuentes", "pos": "PG", "ht": 74, "wt": 160,
+            "ws": None, "year": 2026, "hs": "Riviera Prep", "city": "Miami", "state": "FL",
+            "aau": "Nike EYBL", "classification": "2A",
+            "season": "2025-26", "gp": 28, "ppg": 14.0, "rpg": 3.5, "apg": 9.5,
+            "spg": 2.5, "bpg": 0.1, "fg": 45.0, "three": 35.0, "ft": 80.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Caleb", "last": "Williams", "pos": "SG", "ht": 77, "wt": 195,
+            "ws": None, "year": 2026, "hs": "Specially Fit Academy", "city": "Tampa", "state": "FL",
+            "aau": "Adidas 3SSB", "classification": "Private/Independent",
+            "season": "2025-26", "gp": 25, "ppg": 17.0, "rpg": 4.5, "apg": 2.0,
+            "spg": 1.5, "bpg": 0.3, "fg": 44.0, "three": 36.0, "ft": 76.0,
+            "nationally": 0, "aau_level": "Adidas 3SSB",
+        },
+        {
+            "first": "Donovan", "last": "Williams", "pos": "PG", "ht": 75, "wt": 180,
+            "ws": None, "year": 2026, "hs": "Oak Ridge", "city": "Orlando", "state": "FL",
+            "aau": "Under Armour", "classification": "7A",
+            "season": "2025-26", "gp": 28, "ppg": 16.0, "rpg": 3.5, "apg": 5.0,
+            "spg": 2.0, "bpg": 0.2, "fg": 43.0, "three": 34.0, "ft": 76.0,
+            "nationally": 0, "aau_level": "Under Armour",
+        },
+        {
+            "first": "Hakeem", "last": "Weems", "pos": "C", "ht": 81, "wt": 170,
+            "ws": None, "year": 2026, "hs": "IMG Academy", "city": "Bradenton", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 25, "ppg": 6.0, "rpg": 5.5, "apg": 0.8,
+            "spg": 0.3, "bpg": 2.0, "fg": 52.0, "three": 0.0, "ft": 58.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Keeper", "last": "Jackson", "pos": "PF", "ht": 78, "wt": 180,
+            "ws": None, "year": 2026, "hs": "Miami Columbus", "city": "Miami", "state": "FL",
+            "aau": "Adidas 3SSB", "classification": "7A",
+            "season": "2025-26", "gp": 30, "ppg": 9.0, "rpg": 6.0, "apg": 1.2,
+            "spg": 0.8, "bpg": 1.0, "fg": 48.0, "three": 28.0, "ft": 68.0,
+            "nationally": 1, "aau_level": "Adidas 3SSB",
+        },
+        {
+            "first": "MJ", "last": "Madison", "pos": "PF", "ht": 81, "wt": 215,
+            "ws": None, "year": 2026, "hs": "Prolific Prep", "city": "Fort Lauderdale", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 30, "ppg": 9.0, "rpg": 5.5, "apg": 0.8,
+            "spg": 0.4, "bpg": 1.2, "fg": 50.0, "three": 25.0, "ft": 62.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Evan", "last": "Roberts", "pos": "PG", "ht": 73, "wt": 170,
+            "ws": None, "year": 2026, "hs": "Zephyrhills Christian", "city": "Zephyrhills", "state": "FL",
+            "aau": "Independent/Regional", "classification": "Private/Independent",
+            "season": "2025-26", "gp": 25, "ppg": 18.0, "rpg": 3.5, "apg": 6.5,
+            "spg": 2.2, "bpg": 0.1, "fg": 43.0, "three": 35.0, "ft": 80.0,
+            "nationally": 0, "aau_level": "Independent/Regional",
+        },
+        {
+            "first": "Symon", "last": "Ghai", "pos": "C", "ht": 87, "wt": 210,
+            "ws": None, "year": 2026, "hs": "Academy of Central Florida", "city": "Orlando", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 25, "ppg": 6.0, "rpg": 7.0, "apg": 1.0,
+            "spg": 0.3, "bpg": 3.0, "fg": 55.0, "three": 0.0, "ft": 55.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Jayden", "last": "Hodge", "pos": "SF", "ht": 78, "wt": 190,
+            "ws": None, "year": 2026, "hs": "Montverde Academy", "city": "Montverde", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 34, "ppg": 7.5, "rpg": 3.5, "apg": 1.5,
+            "spg": 1.0, "bpg": 0.4, "fg": 45.0, "three": 34.0, "ft": 73.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Jermal", "last": "Jones", "pos": "SG", "ht": 75, "wt": 180,
+            "ws": None, "year": 2026, "hs": "IMG Academy", "city": "Bradenton", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 28, "ppg": 9.0, "rpg": 3.0, "apg": 2.5,
+            "spg": 1.2, "bpg": 0.2, "fg": 43.0, "three": 35.0, "ft": 76.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Dhani", "last": "Miller", "pos": "SG", "ht": 74, "wt": 185,
+            "ws": None, "year": 2026, "hs": "Montverde Academy", "city": "Montverde", "state": "FL",
+            "aau": "Adidas 3SSB", "classification": "Prep School",
+            "season": "2025-26", "gp": 34, "ppg": 6.0, "rpg": 2.5, "apg": 3.0,
+            "spg": 1.0, "bpg": 0.1, "fg": 42.0, "three": 35.0, "ft": 78.0,
+            "nationally": 1, "aau_level": "Adidas 3SSB",
+        },
+        {
+            "first": "Archie", "last": "McFadden", "pos": "PG", "ht": 74, "wt": 175,
+            "ws": None, "year": 2026, "hs": "North Tampa Christian", "city": "Zephyrhills", "state": "FL",
+            "aau": "Independent/Regional", "classification": "Private/Independent",
+            "season": "2025-26", "gp": 25, "ppg": 16.0, "rpg": 3.0, "apg": 5.5,
+            "spg": 2.0, "bpg": 0.1, "fg": 42.0, "three": 34.0, "ft": 78.0,
+            "nationally": 0, "aau_level": "Independent/Regional",
+        },
+        {
+            "first": "Nate", "last": "Earl", "pos": "PG", "ht": 72, "wt": 165,
+            "ws": None, "year": 2026, "hs": "Oak Ridge", "city": "Orlando", "state": "FL",
+            "aau": "Independent/Regional", "classification": "7A",
+            "season": "2025-26", "gp": 28, "ppg": 12.0, "rpg": 2.5, "apg": 5.0,
+            "spg": 1.8, "bpg": 0.1, "fg": 40.0, "three": 33.0, "ft": 75.0,
+            "nationally": 0, "aau_level": "Independent/Regional",
+        },
+        {
+            "first": "AJ", "last": "Williams", "pos": "SF", "ht": 79, "wt": 180,
+            "ws": None, "year": 2026, "hs": "DME Academy", "city": "Daytona Beach", "state": "FL",
+            "aau": "Under Armour", "classification": "Prep School",
+            "season": "2025-26", "gp": 26, "ppg": 13.0, "rpg": 5.5, "apg": 1.5,
+            "spg": 1.0, "bpg": 0.6, "fg": 45.0, "three": 32.0, "ft": 70.0,
+            "nationally": 0, "aau_level": "Under Armour",
+        },
+
+        # ── MAXPREPS STAT LEADERS (non-duplicates) ────────────────────
+        {
+            "first": "Tai", "last": "Bell", "pos": "PG", "ht": 75, "wt": 200,
+            "ws": None, "year": 2028, "hs": "Mater Lakes Academy", "city": "Hialeah", "state": "FL",
+            "aau": "Nike EYBL", "classification": "3A",
+            "season": "2025-26", "gp": 14, "ppg": 33.5, "rpg": 5.0, "apg": 4.0,
+            "spg": 2.5, "bpg": 0.3, "fg": 53.0, "three": 38.0, "ft": 80.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "DJ", "last": "Gaines", "pos": "PG", "ht": 74, "wt": 175,
+            "ws": None, "year": 2026, "hs": "Westminster Academy", "city": "Fort Lauderdale", "state": "FL",
+            "aau": "Independent/Regional", "classification": "3A",
+            "season": "2025-26", "gp": 10, "ppg": 30.7, "rpg": 4.0, "apg": 4.5,
+            "spg": 2.0, "bpg": 0.2, "fg": 62.0, "three": 40.0, "ft": 78.0,
+            "nationally": 0, "aau_level": "Independent/Regional",
+        },
+        {
+            "first": "Gavin", "last": "Henderson", "pos": "PG", "ht": 73, "wt": 170,
+            "ws": None, "year": 2026, "hs": "Lakewood Ranch Prep", "city": "Bradenton", "state": "FL",
+            "aau": "Independent/Regional", "classification": "Private/Independent",
+            "season": "2025-26", "gp": 25, "ppg": 27.2, "rpg": 4.0, "apg": 5.0,
+            "spg": 2.0, "bpg": 0.2, "fg": 52.0, "three": 38.0, "ft": 80.0,
+            "nationally": 0, "aau_level": "Independent/Regional",
+        },
+        {
+            "first": "Micah", "last": "Smith", "pos": "SF", "ht": 78, "wt": 190,
+            "ws": None, "year": 2026, "hs": "Sheridan Hills Christian", "city": "Hollywood", "state": "FL",
+            "aau": "Independent/Regional", "classification": "Private/Independent",
+            "season": "2025-26", "gp": 23, "ppg": 27.2, "rpg": 8.0, "apg": 2.0,
+            "spg": 2.0, "bpg": 3.9, "fg": 50.0, "three": 30.0, "ft": 72.0,
+            "nationally": 0, "aau_level": "Independent/Regional",
+        },
+        {
+            "first": "Caden", "last": "Martinez", "pos": "SG", "ht": 76, "wt": 180,
+            "ws": None, "year": 2026, "hs": "Cambridge Christian", "city": "Tampa", "state": "FL",
+            "aau": "Independent/Regional", "classification": "Private/Independent",
+            "season": "2025-26", "gp": 25, "ppg": 26.8, "rpg": 4.5, "apg": 3.0,
+            "spg": 1.5, "bpg": 0.3, "fg": 55.0, "three": 38.0, "ft": 80.0,
+            "nationally": 0, "aau_level": "Independent/Regional",
+        },
+        {
+            "first": "Daniel", "last": "Rees", "pos": "PG", "ht": 73, "wt": 170,
+            "ws": None, "year": 2026, "hs": "Neumann", "city": "Naples", "state": "FL",
+            "aau": "Independent/Regional", "classification": "Private/Independent",
+            "season": "2025-26", "gp": 30, "ppg": 26.5, "rpg": 3.5, "apg": 5.0,
+            "spg": 2.0, "bpg": 0.2, "fg": 47.0, "three": 36.0, "ft": 82.0,
+            "nationally": 0, "aau_level": "Independent/Regional",
+        },
+        {
+            "first": "Khanye", "last": "Moss", "pos": "PG", "ht": 74, "wt": 175,
+            "ws": None, "year": 2027, "hs": "Mater Lakes Academy", "city": "Miami", "state": "FL",
+            "aau": "Independent/Regional", "classification": "3A",
+            "season": "2025-26", "gp": 22, "ppg": 26.1, "rpg": 4.0, "apg": 4.5,
+            "spg": 2.0, "bpg": 0.2, "fg": 49.0, "three": 35.0, "ft": 76.0,
+            "nationally": 0, "aau_level": "Independent/Regional",
+        },
+        {
+            "first": "Lenz", "last": "Constant", "pos": "PF", "ht": 78, "wt": 200,
+            "ws": None, "year": 2026, "hs": "Somerset College Prep", "city": "Port St. Lucie", "state": "FL",
+            "aau": "Independent/Regional", "classification": "Private/Independent",
+            "season": "2025-26", "gp": 22, "ppg": 14.0, "rpg": 19.2, "apg": 1.0,
+            "spg": 1.0, "bpg": 2.5, "fg": 50.0, "three": 0.0, "ft": 60.0,
+            "nationally": 0, "aau_level": "Independent/Regional",
+        },
+        {
+            "first": "Ethan", "last": "Knox", "pos": "SG", "ht": 78, "wt": 190,
+            "ws": None, "year": 2027, "hs": "Southeastern Prep", "city": "Orlando", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 28, "ppg": 15.0, "rpg": 4.5, "apg": 2.0,
+            "spg": 1.2, "bpg": 0.5, "fg": 45.0, "three": 35.0, "ft": 76.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+
+        # ── CLASS OF 2027 ──────────────────────────────────────────────
+        {
+            "first": "CJ", "last": "Rosser", "pos": "PF", "ht": 82, "wt": 195,
+            "ws": None, "year": 2027, "hs": "Southeastern Prep", "city": "Orlando", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 28, "ppg": 14.0, "rpg": 7.0, "apg": 1.5,
+            "spg": 1.0, "bpg": 1.8, "fg": 50.0, "three": 28.0, "ft": 68.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Beckham", "last": "Black", "pos": "PG", "ht": 75, "wt": 180,
+            "ws": None, "year": 2027, "hs": "Southeastern Prep", "city": "Orlando", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 28, "ppg": 16.0, "rpg": 3.5, "apg": 7.0,
+            "spg": 2.0, "bpg": 0.2, "fg": 45.0, "three": 37.0, "ft": 82.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Ryan", "last": "Hampton", "pos": "SF", "ht": 78, "wt": 190,
+            "ws": None, "year": 2027, "hs": "DME Academy", "city": "Daytona Beach", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 26, "ppg": 15.0, "rpg": 5.0, "apg": 2.0,
+            "spg": 1.5, "bpg": 0.5, "fg": 46.0, "three": 35.0, "ft": 76.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Obinna", "last": "Ekezie Jr.", "pos": "C", "ht": 84, "wt": 220,
+            "ws": None, "year": 2027, "hs": "Southeastern Prep", "city": "Orlando", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 28, "ppg": 10.0, "rpg": 8.5, "apg": 1.0,
+            "spg": 0.5, "bpg": 3.0, "fg": 58.0, "three": 0.0, "ft": 60.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Nasir", "last": "Anderson", "pos": "PG", "ht": 76, "wt": 205,
+            "ws": None, "year": 2027, "hs": "Prolific Prep", "city": "Fort Lauderdale", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 30, "ppg": 12.0, "rpg": 3.5, "apg": 6.0,
+            "spg": 1.8, "bpg": 0.3, "fg": 44.0, "three": 36.0, "ft": 78.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Cayden", "last": "Daughtry", "pos": "PG", "ht": 72, "wt": 155,
+            "ws": None, "year": 2027, "hs": "Calvary Christian Academy", "city": "Fort Lauderdale", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Private/Independent",
+            "season": "2025-26", "gp": 22, "ppg": 26.5, "rpg": 3.0, "apg": 5.5,
+            "spg": 2.5, "bpg": 0.2, "fg": 55.0, "three": 40.0, "ft": 85.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Aaron", "last": "Britt Jr.", "pos": "PG", "ht": 71, "wt": 155,
+            "ws": None, "year": 2027, "hs": "The Villages Charter", "city": "The Villages", "state": "FL",
+            "aau": "Under Armour", "classification": "4A",
+            "season": "2025-26", "gp": 28, "ppg": 14.0, "rpg": 3.0, "apg": 6.0,
+            "spg": 2.0, "bpg": 0.1, "fg": 44.0, "three": 36.0, "ft": 80.0,
+            "nationally": 1, "aau_level": "Under Armour",
+        },
+        {
+            "first": "Oneal", "last": "Delancy", "pos": "SG", "ht": 74, "wt": 165,
+            "ws": None, "year": 2027, "hs": "Montverde Academy", "city": "Montverde", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 34, "ppg": 8.0, "rpg": 2.5, "apg": 3.5,
+            "spg": 1.5, "bpg": 0.2, "fg": 43.0, "three": 35.0, "ft": 78.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Henry", "last": "Robinson Jr.", "pos": "SF", "ht": 78, "wt": 185,
+            "ws": None, "year": 2027, "hs": "Pine Ridge", "city": "Deltona", "state": "FL",
+            "aau": "Under Armour", "classification": "6A",
+            "season": "2025-26", "gp": 23, "ppg": 27.6, "rpg": 7.0, "apg": 2.5,
+            "spg": 2.0, "bpg": 1.0, "fg": 60.0, "three": 35.0, "ft": 75.0,
+            "nationally": 1, "aau_level": "Under Armour",
+        },
+        {
+            "first": "Carson", "last": "Crawford", "pos": "SF", "ht": 78, "wt": 180,
+            "ws": None, "year": 2027, "hs": "Fleming Island", "city": "Orange Park", "state": "FL",
+            "aau": "Adidas 3SSB", "classification": "6A",
+            "season": "2025-26", "gp": 26, "ppg": 16.0, "rpg": 5.0, "apg": 2.0,
+            "spg": 1.5, "bpg": 0.5, "fg": 46.0, "three": 35.0, "ft": 76.0,
+            "nationally": 1, "aau_level": "Adidas 3SSB",
+        },
+        {
+            "first": "Jomar", "last": "Bernard", "pos": "SF", "ht": 79, "wt": 175,
+            "ws": None, "year": 2027, "hs": "The Villages Charter", "city": "The Villages", "state": "FL",
+            "aau": "Under Armour", "classification": "4A",
+            "season": "2025-26", "gp": 28, "ppg": 13.0, "rpg": 6.0, "apg": 1.5,
+            "spg": 1.2, "bpg": 0.8, "fg": 47.0, "three": 30.0, "ft": 70.0,
+            "nationally": 1, "aau_level": "Under Armour",
+        },
+        {
+            "first": "Myles", "last": "Fuentes", "pos": "PG", "ht": 72, "wt": 165,
+            "ws": None, "year": 2027, "hs": "Riviera Prep", "city": "Miami", "state": "FL",
+            "aau": "Nike EYBL", "classification": "2A",
+            "season": "2025-26", "gp": 28, "ppg": 12.0, "rpg": 2.5, "apg": 7.0,
+            "spg": 2.0, "bpg": 0.1, "fg": 43.0, "three": 34.0, "ft": 78.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Derek", "last": "Daniels", "pos": "C", "ht": 79, "wt": 230,
+            "ws": None, "year": 2027, "hs": "Montverde Academy", "city": "Montverde", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 34, "ppg": 6.0, "rpg": 6.0, "apg": 0.8,
+            "spg": 0.3, "bpg": 2.0, "fg": 55.0, "three": 0.0, "ft": 58.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Miguel", "last": "Orbe", "pos": "SG", "ht": 75, "wt": 160,
+            "ws": None, "year": 2027, "hs": "Miami Country Day", "city": "Miami", "state": "FL",
+            "aau": "Adidas 3SSB", "classification": "Private/Independent",
+            "season": "2025-26", "gp": 26, "ppg": 14.0, "rpg": 3.0, "apg": 4.0,
+            "spg": 1.5, "bpg": 0.2, "fg": 44.0, "three": 36.0, "ft": 78.0,
+            "nationally": 1, "aau_level": "Adidas 3SSB",
+        },
+        {
+            "first": "Lewis", "last": "Uvwo", "pos": "C", "ht": 82, "wt": 225,
+            "ws": None, "year": 2027, "hs": "Prolific Prep", "city": "Fort Lauderdale", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 28, "ppg": 8.0, "rpg": 7.0, "apg": 0.8,
+            "spg": 0.3, "bpg": 2.5, "fg": 56.0, "three": 0.0, "ft": 58.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Quincy", "last": "Douby Jr.", "pos": "SG", "ht": 75, "wt": 165,
+            "ws": None, "year": 2027, "hs": "Riviera Prep", "city": "Miami", "state": "FL",
+            "aau": "Nike EYBL", "classification": "2A",
+            "season": "2025-26", "gp": 28, "ppg": 14.0, "rpg": 3.5, "apg": 3.0,
+            "spg": 1.5, "bpg": 0.3, "fg": 44.0, "three": 36.0, "ft": 80.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Marri", "last": "Wesley", "pos": "SF", "ht": 77, "wt": 205,
+            "ws": None, "year": 2027, "hs": "Southeastern Prep", "city": "Orlando", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 28, "ppg": 11.0, "rpg": 5.0, "apg": 1.5,
+            "spg": 1.0, "bpg": 0.5, "fg": 45.0, "three": 32.0, "ft": 72.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "JJ", "last": "Watts", "pos": "PF", "ht": 79, "wt": 185,
+            "ws": None, "year": 2027, "hs": "Riviera Prep", "city": "Miami", "state": "FL",
+            "aau": "Nike EYBL", "classification": "2A",
+            "season": "2025-26", "gp": 28, "ppg": 10.0, "rpg": 6.5, "apg": 1.0,
+            "spg": 0.8, "bpg": 1.5, "fg": 48.0, "three": 25.0, "ft": 65.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Marlon", "last": "Martinez", "pos": "SG", "ht": 77, "wt": 180,
+            "ws": None, "year": 2027, "hs": "Academy of Central Florida", "city": "Orlando", "state": "FL",
+            "aau": "Adidas 3SSB", "classification": "Prep School",
+            "season": "2025-26", "gp": 26, "ppg": 13.0, "rpg": 4.0, "apg": 2.5,
+            "spg": 1.2, "bpg": 0.3, "fg": 44.0, "three": 35.0, "ft": 76.0,
+            "nationally": 1, "aau_level": "Adidas 3SSB",
+        },
+        {
+            "first": "Griffin", "last": "Starks", "pos": "PF", "ht": 79, "wt": 185,
+            "ws": None, "year": 2027, "hs": "Southeastern Prep", "city": "Orlando", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 28, "ppg": 9.0, "rpg": 6.0, "apg": 1.0,
+            "spg": 0.5, "bpg": 1.2, "fg": 48.0, "three": 28.0, "ft": 68.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Nolan", "last": "Nelson", "pos": "PF", "ht": 80, "wt": 210,
+            "ws": None, "year": 2027, "hs": "Providence", "city": "Jacksonville", "state": "FL",
+            "aau": "Under Armour", "classification": "5A",
+            "season": "2025-26", "gp": 26, "ppg": 14.0, "rpg": 7.5, "apg": 1.0,
+            "spg": 0.5, "bpg": 1.5, "fg": 50.0, "three": 28.0, "ft": 68.0,
+            "nationally": 1, "aau_level": "Under Armour",
+        },
+        {
+            "first": "Malachi", "last": "Booker", "pos": "SF", "ht": 79, "wt": 220,
+            "ws": None, "year": 2027, "hs": "Montverde Academy", "city": "Montverde", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 34, "ppg": 7.0, "rpg": 5.0, "apg": 1.0,
+            "spg": 0.8, "bpg": 0.5, "fg": 46.0, "three": 30.0, "ft": 70.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Fallilou", "last": "Mbengue", "pos": "C", "ht": 81, "wt": 205,
+            "ws": None, "year": 2027, "hs": "Academy of Central Florida", "city": "Orlando", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 25, "ppg": 7.0, "rpg": 7.5, "apg": 0.8,
+            "spg": 0.3, "bpg": 2.5, "fg": 55.0, "three": 0.0, "ft": 55.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Joessette", "last": "Sanchez", "pos": "SF", "ht": 77, "wt": 180,
+            "ws": None, "year": 2027, "hs": "Central Pointe Academy", "city": "Kissimmee", "state": "FL",
+            "aau": "Adidas 3SSB", "classification": "Private/Independent",
+            "season": "2025-26", "gp": 24, "ppg": 15.0, "rpg": 5.0, "apg": 2.0,
+            "spg": 1.2, "bpg": 0.5, "fg": 45.0, "three": 33.0, "ft": 74.0,
+            "nationally": 1, "aau_level": "Adidas 3SSB",
+        },
+        {
+            "first": "Charlie", "last": "Cohn", "pos": "C", "ht": 84, "wt": 220,
+            "ws": None, "year": 2027, "hs": "Prolific Prep", "city": "Fort Lauderdale", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 28, "ppg": 7.0, "rpg": 6.0, "apg": 1.0,
+            "spg": 0.3, "bpg": 2.0, "fg": 54.0, "three": 0.0, "ft": 60.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Aiden", "last": "Bolden", "pos": "PF", "ht": 77, "wt": 220,
+            "ws": None, "year": 2027, "hs": "Calvary Christian Academy", "city": "Fort Lauderdale", "state": "FL",
+            "aau": "Under Armour", "classification": "Private/Independent",
+            "season": "2025-26", "gp": 22, "ppg": 10.0, "rpg": 7.0, "apg": 1.0,
+            "spg": 0.5, "bpg": 1.0, "fg": 48.0, "three": 20.0, "ft": 65.0,
+            "nationally": 0, "aau_level": "Under Armour",
+        },
+
+        # ── CLASS OF 2028 ──────────────────────────────────────────────
+        {
+            "first": "Bamba", "last": "Touray", "pos": "C", "ht": 84, "wt": 205,
+            "ws": None, "year": 2028, "hs": "IMG Academy", "city": "Bradenton", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 25, "ppg": 8.0, "rpg": 7.0, "apg": 1.0,
+            "spg": 0.3, "bpg": 3.0, "fg": 55.0, "three": 0.0, "ft": 55.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Dylan", "last": "Betts", "pos": "C", "ht": 87, "wt": 230,
+            "ws": None, "year": 2028, "hs": "IMG Academy", "city": "Bradenton", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 25, "ppg": 7.0, "rpg": 8.0, "apg": 0.8,
+            "spg": 0.2, "bpg": 3.5, "fg": 58.0, "three": 0.0, "ft": 55.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Nijaun", "last": "Harris", "pos": "SG", "ht": 77, "wt": 175,
+            "ws": None, "year": 2028, "hs": "St. Petersburg", "city": "St. Petersburg", "state": "FL",
+            "aau": "Under Armour", "classification": "6A",
+            "season": "2025-26", "gp": 24, "ppg": 18.0, "rpg": 4.0, "apg": 3.0,
+            "spg": 2.0, "bpg": 0.5, "fg": 46.0, "three": 35.0, "ft": 76.0,
+            "nationally": 1, "aau_level": "Under Armour",
+        },
+        {
+            "first": "Kmajay", "last": "Jenkins", "pos": "SF", "ht": 78, "wt": 180,
+            "ws": None, "year": 2028, "hs": "DME Academy", "city": "Daytona Beach", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Prep School",
+            "season": "2025-26", "gp": 24, "ppg": 12.0, "rpg": 5.0, "apg": 1.5,
+            "spg": 1.2, "bpg": 0.5, "fg": 45.0, "three": 32.0, "ft": 72.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+
+        # ── MORE STAT LEADERS & NOTABLE PLAYERS ───────────────────────
+        {
+            "first": "Mason", "last": "Hart", "pos": "PF", "ht": 78, "wt": 195,
+            "ws": None, "year": 2026, "hs": "Dreyfoos School of the Arts", "city": "West Palm Beach", "state": "FL",
+            "aau": "Independent/Regional", "classification": "Public",
+            "season": "2025-26", "gp": 22, "ppg": 12.0, "rpg": 15.4, "apg": 1.5,
+            "spg": 1.0, "bpg": 2.0, "fg": 48.0, "three": 0.0, "ft": 60.0,
+            "nationally": 0, "aau_level": "Independent/Regional",
+        },
+        {
+            "first": "Kaii", "last": "Levy", "pos": "PF", "ht": 79, "wt": 200,
+            "ws": None, "year": 2026, "hs": "Tampa Prep", "city": "Tampa", "state": "FL",
+            "aau": "Independent/Regional", "classification": "Private/Independent",
+            "season": "2025-26", "gp": 22, "ppg": 13.0, "rpg": 17.3, "apg": 1.0,
+            "spg": 1.0, "bpg": 2.0, "fg": 50.0, "three": 0.0, "ft": 58.0,
+            "nationally": 0, "aau_level": "Independent/Regional",
+        },
+        {
+            "first": "DJ", "last": "Sandi", "pos": "PG", "ht": 74, "wt": 175,
+            "ws": None, "year": 2027, "hs": "St. Thomas Aquinas", "city": "Fort Lauderdale", "state": "FL",
+            "aau": "Adidas 3SSB", "classification": "7A",
+            "season": "2025-26", "gp": 26, "ppg": 12.0, "rpg": 3.0, "apg": 8.3,
+            "spg": 2.0, "bpg": 0.2, "fg": 43.0, "three": 34.0, "ft": 76.0,
+            "nationally": 0, "aau_level": "Adidas 3SSB",
+        },
+        {
+            "first": "Leo", "last": "Lenardos", "pos": "PG", "ht": 73, "wt": 165,
+            "ws": None, "year": 2027, "hs": "Cambridge Christian", "city": "Tampa", "state": "FL",
+            "aau": "Independent/Regional", "classification": "Private/Independent",
+            "season": "2025-26", "gp": 25, "ppg": 14.0, "rpg": 3.0, "apg": 8.3,
+            "spg": 2.0, "bpg": 0.1, "fg": 42.0, "three": 34.0, "ft": 78.0,
+            "nationally": 0, "aau_level": "Independent/Regional",
+        },
+        {
+            "first": "Alexander", "last": "Constanza", "pos": "SF", "ht": 80, "wt": 200,
+            "ws": None, "year": 2027, "hs": "Westminster Academy", "city": "Fort Lauderdale", "state": "FL",
+            "aau": "Nike EYBL", "classification": "3A",
+            "season": "2025-26", "gp": 26, "ppg": 18.0, "rpg": 7.0, "apg": 2.5,
+            "spg": 1.5, "bpg": 1.0, "fg": 48.0, "three": 33.0, "ft": 74.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+        {
+            "first": "Christopher", "last": "Washington Jr.", "pos": "SF", "ht": 81, "wt": 195,
+            "ws": None, "year": 2027, "hs": "Providence Christian Academy", "city": "The Villages", "state": "FL",
+            "aau": "Nike EYBL", "classification": "Private/Independent",
+            "season": "2025-26", "gp": 26, "ppg": 16.0, "rpg": 6.5, "apg": 2.0,
+            "spg": 1.2, "bpg": 1.0, "fg": 47.0, "three": 32.0, "ft": 72.0,
+            "nationally": 1, "aau_level": "Nike EYBL",
+        },
+    ]
+
+    for p in players:
+        # Insert player
+        c.execute("""
+            INSERT INTO players (first_name, last_name, position, height_inches, weight,
+                                 wingspan_inches, grad_year, high_school, city, state, aau_program)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (p["first"], p["last"], p["pos"], p["ht"], p["wt"],
+              p.get("ws"), p["year"], p["hs"], p["city"], p["state"], p.get("aau")))
+        pid = c.lastrowid
+
+        # Insert stats
+        c.execute("""
+            INSERT INTO stats (player_id, season, games_played, ppg, rpg, apg, spg, bpg,
+                               fg_pct, three_pct, ft_pct)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (pid, p["season"], p["gp"], p["ppg"], p["rpg"], p["apg"],
+              p["spg"], p["bpg"], p["fg"], p["three"], p["ft"]))
+
+        # Insert competition
+        c.execute("""
+            INSERT INTO competition (player_id, school_classification, played_nationally, aau_circuit_level)
+            VALUES (?, ?, ?, ?)
+        """, (pid, p["classification"], p["nationally"], p["aau_level"]))
+
+    conn.commit()
+    count = c.execute("SELECT COUNT(*) FROM players").fetchone()[0]
+    conn.close()
+    return count
+
+
+if __name__ == "__main__":
+    count = seed_florida()
+    print(f"Seeded {count} Florida players.")

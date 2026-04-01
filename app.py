@@ -753,6 +753,15 @@ def clear_db():
     return redirect(url_for("index"))
 
 
+# ── Seed Florida Players ──────────────────────────────────────────
+@app.route("/seed-florida", methods=["POST"])
+def seed_florida_route():
+    from seed_florida_current import seed_florida
+    count = seed_florida()
+    flash(f"Seeded {count} current Florida players.", "success")
+    return redirect(url_for("index"))
+
+
 # ── API: Projection for AJAX ──────────────────────────────────────
 @app.route("/api/projection/<int:player_id>")
 def api_projection(player_id):
