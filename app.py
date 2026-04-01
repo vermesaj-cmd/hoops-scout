@@ -8,7 +8,6 @@ app = Flask(__name__)
 app.secret_key = "hoopscout-dev-key"
 
 # Initialize database on import (needed for gunicorn)
-from database import init_db
 init_db()
 
 US_STATES = [
