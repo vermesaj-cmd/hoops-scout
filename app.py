@@ -7,6 +7,10 @@ from projection import project_player, height_to_display, TIERS, SCHOOLS
 app = Flask(__name__)
 app.secret_key = "hoopscout-dev-key"
 
+# Initialize database on import (needed for gunicorn)
+from database import init_db
+init_db()
+
 US_STATES = [
     "AL","AK","AZ","AR","CA","CO","CT","DC","DE","FL","GA","HI","ID","IL","IN",
     "IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH",
