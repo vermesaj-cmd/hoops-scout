@@ -1,0 +1,205 @@
+/* ── HoopScout Theme ────────────────────────────────────────────── */
+:root {
+    --hs-orange: #ff8c00;
+    --hs-orange-dim: #cc7000;
+    --hs-bg: #0d1117;
+    --hs-card: #161b22;
+    --hs-border: #30363d;
+}
+
+body {
+    background: var(--hs-bg);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.navbar {
+    background: var(--hs-card) !important;
+    border-color: var(--hs-border) !important;
+}
+
+.navbar-brand {
+    color: var(--hs-orange) !important;
+    font-size: 1.4rem;
+    letter-spacing: -0.5px;
+}
+
+/* Cards */
+.card, .stat-card {
+    background: var(--hs-card);
+    border: 1px solid var(--hs-border);
+    border-radius: 12px;
+}
+
+.stat-card {
+    padding: 1.25rem;
+    text-align: center;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(255, 140, 0, 0.1);
+}
+
+.stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--hs-orange);
+    line-height: 1.1;
+}
+
+.stat-card .stat-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #8b949e;
+    margin-top: 0.25rem;
+}
+
+/* Tier badges */
+.tier-badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.tier-1 { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; }
+.tier-2 { background: linear-gradient(135deg, #4fc3f7, #0288d1); color: #000; }
+.tier-3 { background: linear-gradient(135deg, #81c784, #388e3c); color: #000; }
+.tier-4 { background: linear-gradient(135deg, #ce93d8, #7b1fa2); color: #fff; }
+.tier-5 { background: linear-gradient(135deg, #a1887f, #5d4037); color: #fff; }
+
+/* Score bars */
+.score-bar-wrap {
+    background: #21262d;
+    border-radius: 8px;
+    height: 10px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+.score-bar {
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.6s ease;
+}
+
+.score-bar.high { background: linear-gradient(90deg, #ffd700, #ff8c00); }
+.score-bar.mid { background: linear-gradient(90deg, #4fc3f7, #0288d1); }
+.score-bar.low { background: linear-gradient(90deg, #ef5350, #c62828); }
+
+/* Tables */
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-hover-bg: rgba(255, 140, 0, 0.05);
+}
+
+.table thead th {
+    border-bottom: 2px solid var(--hs-orange);
+    color: var(--hs-orange);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+}
+
+.table td { vertical-align: middle; }
+
+/* Position badges */
+.pos-badge {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.75rem;
+}
+
+.pos-PG { background: #1e88e5; color: #fff; }
+.pos-SG { background: #43a047; color: #fff; }
+.pos-SF { background: #fb8c00; color: #fff; }
+.pos-PF { background: #e53935; color: #fff; }
+.pos-C  { background: #8e24aa; color: #fff; }
+
+/* School cards */
+.school-card {
+    background: #21262d;
+    border: 1px solid var(--hs-border);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    transition: border-color 0.15s;
+}
+
+.school-card:hover {
+    border-color: var(--hs-orange);
+}
+
+.school-card .school-name {
+    font-weight: 600;
+    color: #e6edf3;
+}
+
+.school-card .school-conf {
+    font-size: 0.8rem;
+    color: #8b949e;
+}
+
+/* Forms */
+.form-control, .form-select {
+    background: #21262d;
+    border-color: var(--hs-border);
+    color: #e6edf3;
+}
+
+.form-control:focus, .form-select:focus {
+    background: #21262d;
+    border-color: var(--hs-orange);
+    box-shadow: 0 0 0 0.2rem rgba(255, 140, 0, 0.25);
+    color: #e6edf3;
+}
+
+.form-label {
+    font-weight: 500;
+    font-size: 0.85rem;
+    color: #c9d1d9;
+}
+
+.btn-warning {
+    background: var(--hs-orange);
+    border-color: var(--hs-orange);
+    color: #000;
+    font-weight: 600;
+}
+
+.btn-warning:hover {
+    background: var(--hs-orange-dim);
+    border-color: var(--hs-orange-dim);
+    color: #000;
+}
+
+/* Slider labels */
+.rating-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: #8b949e;
+    margin-top: -4px;
+}
+
+/* Comparison table */
+.compare-table th {
+    width: 160px;
+    color: #8b949e;
+    font-weight: 500;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .stat-card .stat-value { font-size: 1.5rem; }
+    .stat-card { padding: 0.75rem; }
+}

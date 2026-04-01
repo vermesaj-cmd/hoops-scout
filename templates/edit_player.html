@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% block title %}HoopScout — Edit {{ data.player.first_name }} {{ data.player.last_name }}{% endblock %}
+
+{% block content %}
+{% set p = data.player %}
+{% set s = data.stats[0] if data.stats else {} %}
+{% set c = data.competition or {} %}
+
+<div class="row mb-4">
+    <div class="col">
+        <h2 class="fw-bold">Edit: {{ p.first_name }} {{ p.last_name }}</h2>
+        <p class="text-muted">Edit player info and stats. Eye-test ratings are submitted via <a href="/players/{{ p.id }}/evaluate" class="text-warning">scout evaluations</a>.</p>
+    </div>
+</div>
+
+<form method="post" action="/players/{{ p.id }}/edit">
+    <!-- Bio -->
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3"><i class="bi bi-person"></i> Player Info</h5>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">First Name *</label>
+                <input type="text" class="form-control" name="first_name" value="{{ p.first_name }}" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Last Name *</label>
+                <input type="text" class="form-control" name="last_name" value="{{ p.last_name }}" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Position *</label>
+                <select class="form-select" name="position" required>
+                    {% for pos in positions %}
+                    <option value="{{ pos }}" {{ 'selected' if p.position == pos }}>{{ pos }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Class Year *</label>
+                <input type="number" class="form-control" name="grad_year" value="{{ p.grad_year }}" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">GPA</label>
+                <input type="number" class="form-control" name="gpa" step="0.01" value="{{ p.gpa or '' }}">
+            </div>
+        </div>
+        <div class="row g-3 mt-1">
+            <div class="col-md-2">
+                <label class="form-label">Height *</label>
+                <div class="input-group">
+                    <select class="form-select" id="height_feet">
+                        {% for ft in [5, 6, 7] %}
+                        <option value="{{ ft }}" {{ 'selected' if (p.height_inches // 12) == ft }}>{{ ft }}'</option>
+                        {% endfor %}
+                    </select>
+                    <select class="form-select" id="height_inches_part">
+                        {% for i in range(12) %}
+                        <option value="{{ i }}" {{ 'selected' if (p.height_inches % 12) == i }}>{{ i }}"</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <input type="hidden" name="height_inches" id="height_inches" value="{{ p.height_inches }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Weight (lbs)</label>
+                <input type="number" class="form-control" name="weight" value="{{ p.weight or '' }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Wingspan</label>
+                <div class="input-group">
+                    <select class="form-select" id="ws_feet">
+                        {% for ft in [5, 6, 7] %}
+                        <option value="{{ ft }}" {{ 'selected' if p.wingspan_inches and (p.wingspan_inches // 12) == ft }}>{{ ft }}'</option>
+                        {% endfor %}
+                    </select>
+                    <select class="form-select" id="ws_inches_part">
+                        {% for i in range(12) %}
+                        <option value="{{ i }}" {{ 'selected' if p.wingspan_inches and (p.wingspan_inches % 12) == i }}>{{ i }}"</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <input type="hidden" name="wingspan_inches" id="wingspan_inches" value="{{ p.wingspan_inches or '' }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">High School</label>
+                <input type="text" class="form-control" name="high_school" value="{{ p.high_school or '' }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">City</label>
+                <input type="text" class="form-control" name="city" value="{{ p.city or '' }}">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">State</label>
+                <select class="form-select" name="state">
+                    <option value="">--</option>
+                    {% for st in us_states %}
+                    <option value="{{ st }}" {{ 'selected' if p.state == st }}>{{ st }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="row g-3 mt-1">
+            <div class="col-md-3">
+                <label class="form-label">AAU / Travel Program</label>
+                <input type="text" class="form-control" name="aau_program" value="{{ p.aau_program or '' }}">
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3"><i class="bi bi-bar-chart"></i> Season Stats</h5>
+        <div class="row g-3">
+            <div class="col-md-2">
+                <label class="form-label">Season</label>
+                <input type="text" class="form-control" name="season" value="{{ s.get('season', '2025-26') }}">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">GP</label>
+                <input type="number" class="form-control" name="games_played" value="{{ s.get('games_played', 0) }}">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">MPG</label>
+                <input type="number" class="form-control" name="minutes_pg" step="0.1" value="{{ s.get('minutes_pg', 0) }}">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">PPG</label>
+                <input type="number" class="form-control" name="ppg" step="0.1" value="{{ s.get('ppg', 0) }}">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">RPG</label>
+                <input type="number" class="form-control" name="rpg" step="0.1" value="{{ s.get('rpg', 0) }}">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">APG</label>
+                <input type="number" class="form-control" name="apg" step="0.1" value="{{ s.get('apg', 0) }}">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">SPG</label>
+                <input type="number" class="form-control" name="spg" step="0.1" value="{{ s.get('spg', 0) }}">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">BPG</label>
+                <input type="number" class="form-control" name="bpg" step="0.1" value="{{ s.get('bpg', 0) }}">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">TO/G</label>
+                <input type="number" class="form-control" name="topg" step="0.1" value="{{ s.get('topg', 0) }}">
+            </div>
+        </div>
+        <div class="row g-3 mt-1">
+            <div class="col-md-2">
+                <label class="form-label">FG%</label>
+                <input type="number" class="form-control" name="fg_pct" step="0.1" value="{{ s.get('fg_pct', 0) }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">3PT%</label>
+                <input type="number" class="form-control" name="three_pct" step="0.1" value="{{ s.get('three_pct', 0) }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">FT%</label>
+                <input type="number" class="form-control" name="ft_pct" step="0.1" value="{{ s.get('ft_pct', 0) }}">
+            </div>
+        </div>
+    </div>
+
+    <!-- Competition -->
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3"><i class="bi bi-trophy"></i> Competition Info</h5>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">HS Division/Classification</label>
+                <select class="form-select" name="school_classification">
+                    <option value="">Select...</option>
+                    {% for div in hs_divisions %}
+                    <option value="{{ div }}" {{ 'selected' if c.get('school_classification') == div }}>{{ div }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">State Ranking</label>
+                <input type="number" class="form-control" name="state_rank" value="{{ c.get('state_rank', '') or '' }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">AAU Circuit Level</label>
+                <select class="form-select" name="aau_circuit_level">
+                    <option value="">Select...</option>
+                    {% for lvl in aau_levels %}
+                    <option value="{{ lvl }}" {{ 'selected' if c.get('aau_circuit_level') == lvl }}>{{ lvl }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <div class="form-check mt-4">
+                    <input class="form-check-input" type="checkbox" name="played_nationally" value="1"
+                           {{ 'checked' if c.get('played_nationally') }}>
+                    <label class="form-check-label">Played Nationally</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-warning btn-lg"><i class="bi bi-check-lg"></i> Save Changes</button>
+        <a href="/players/{{ p.id }}" class="btn btn-outline-secondary btn-lg">Cancel</a>
+    </div>
+</form>
+{% endblock %}

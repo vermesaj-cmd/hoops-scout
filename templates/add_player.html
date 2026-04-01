@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+{% block title %}HoopScout — Add Player{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2 class="fw-bold">Add Player</h2>
+        <p class="text-muted">Enter scouting data for a new prospect</p>
+    </div>
+</div>
+
+<form method="post" action="/players/add">
+    <!-- Section 1: Bio -->
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3"><i class="bi bi-person"></i> Player Info</h5>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">First Name *</label>
+                <input type="text" class="form-control" name="first_name" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Last Name *</label>
+                <input type="text" class="form-control" name="last_name" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Position *</label>
+                <select class="form-select" name="position" required>
+                    {% for pos in positions %}
+                    <option value="{{ pos }}">{{ pos }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Class Year *</label>
+                <input type="number" class="form-control" name="grad_year" value="2026" min="2024" max="2032" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">GPA</label>
+                <input type="number" class="form-control" name="gpa" step="0.01" min="0" max="5.0" placeholder="3.5">
+            </div>
+        </div>
+
+        <div class="row g-3 mt-1">
+            <div class="col-md-2">
+                <label class="form-label">Height *</label>
+                <div class="input-group">
+                    <select class="form-select" id="height_feet">
+                        <option value="5">5'</option>
+                        <option value="6" selected>6'</option>
+                        <option value="7">7'</option>
+                    </select>
+                    <select class="form-select" id="height_inches_part">
+                        {% for i in range(12) %}
+                        <option value="{{ i }}">{{ i }}"</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <input type="hidden" name="height_inches" id="height_inches" value="72">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Weight (lbs)</label>
+                <input type="number" class="form-control" name="weight" placeholder="180">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Wingspan</label>
+                <div class="input-group">
+                    <select class="form-select" id="ws_feet">
+                        <option value="5">5'</option>
+                        <option value="6" selected>6'</option>
+                        <option value="7">7'</option>
+                    </select>
+                    <select class="form-select" id="ws_inches_part">
+                        {% for i in range(12) %}
+                        <option value="{{ i }}">{{ i }}"</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <input type="hidden" name="wingspan_inches" id="wingspan_inches" value="">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">High School</label>
+                <input type="text" class="form-control" name="high_school" placeholder="School name">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">City</label>
+                <input type="text" class="form-control" name="city" placeholder="City">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">State</label>
+                <select class="form-select" name="state">
+                    <option value="">--</option>
+                    {% for st in us_states %}
+                    <option value="{{ st }}">{{ st }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="row g-3 mt-1">
+            <div class="col-md-3">
+                <label class="form-label">AAU / Travel Program</label>
+                <input type="text" class="form-control" name="aau_program" placeholder="Team name">
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Stats -->
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3"><i class="bi bi-bar-chart"></i> Season Stats</h5>
+        <div class="row g-3">
+            <div class="col-md-2">
+                <label class="form-label">Season</label>
+                <input type="text" class="form-control" name="season" value="2025-26" placeholder="2025-26">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">GP</label>
+                <input type="number" class="form-control" name="games_played" placeholder="0">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">MPG</label>
+                <input type="number" class="form-control" name="minutes_pg" step="0.1" placeholder="0">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">PPG</label>
+                <input type="number" class="form-control" name="ppg" step="0.1" placeholder="0">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">RPG</label>
+                <input type="number" class="form-control" name="rpg" step="0.1" placeholder="0">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">APG</label>
+                <input type="number" class="form-control" name="apg" step="0.1" placeholder="0">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">SPG</label>
+                <input type="number" class="form-control" name="spg" step="0.1" placeholder="0">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">BPG</label>
+                <input type="number" class="form-control" name="bpg" step="0.1" placeholder="0">
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">TO/G</label>
+                <input type="number" class="form-control" name="topg" step="0.1" placeholder="0">
+            </div>
+        </div>
+        <div class="row g-3 mt-1">
+            <div class="col-md-2">
+                <label class="form-label">FG%</label>
+                <input type="number" class="form-control" name="fg_pct" step="0.1" min="0" max="100" placeholder="45.0">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">3PT%</label>
+                <input type="number" class="form-control" name="three_pct" step="0.1" min="0" max="100" placeholder="35.0">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">FT%</label>
+                <input type="number" class="form-control" name="ft_pct" step="0.1" min="0" max="100" placeholder="75.0">
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Athleticism -->
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3"><i class="bi bi-lightning"></i> Athleticism</h5>
+        <div class="row g-3">
+            {% for attr in ['speed', 'vertical', 'agility', 'strength', 'endurance'] %}
+            <div class="col-md-4">
+                <label class="form-label">{{ attr|capitalize }}: <strong id="{{ attr }}_val">5</strong>/10</label>
+                <input type="range" class="form-range" name="{{ attr }}" id="{{ attr }}" min="1" max="10" value="5">
+                <div class="rating-label"><span>Poor</span><span>Elite</span></div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="row g-3 mt-2">
+            <div class="col-md-3">
+                <label class="form-label">Vertical (inches)</label>
+                <input type="number" class="form-control" name="vertical_inches" step="0.5" placeholder="32">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Lane Agility (sec)</label>
+                <input type="number" class="form-control" name="lane_agility_sec" step="0.01" placeholder="11.5">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">3/4 Court Sprint (sec)</label>
+                <input type="number" class="form-control" name="sprint_sec" step="0.01" placeholder="3.3">
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 4: Intangibles -->
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3"><i class="bi bi-brain"></i> Intangibles</h5>
+        <div class="row g-3">
+            {% for attr, label in [('basketball_iq','Basketball IQ'), ('motor','Motor'), ('coachability','Coachability'), ('leadership','Leadership'), ('clutch','Clutch'), ('defensive_instincts','Defensive Instincts')] %}
+            <div class="col-md-4">
+                <label class="form-label">{{ label }}: <strong id="{{ attr }}_val">5</strong>/10</label>
+                <input type="range" class="form-range" name="{{ attr }}" id="{{ attr }}" min="1" max="10" value="5">
+                <div class="rating-label"><span>Poor</span><span>Elite</span></div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Section 5: Competition Level -->
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3"><i class="bi bi-trophy"></i> Competition Level</h5>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">HS Division/Classification</label>
+                <select class="form-select" name="school_classification">
+                    <option value="">Select...</option>
+                    {% for div in hs_divisions %}
+                    <option value="{{ div }}">{{ div }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">State Ranking</label>
+                <input type="number" class="form-control" name="state_rank" min="1" placeholder="e.g. 15">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">AAU Circuit Level</label>
+                <select class="form-select" name="aau_circuit_level">
+                    <option value="">Select...</option>
+                    {% for lvl in aau_levels %}
+                    <option value="{{ lvl }}">{{ lvl }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <div class="form-check mt-4">
+                    <input class="form-check-input" type="checkbox" name="played_nationally" id="played_nationally" value="1">
+                    <label class="form-check-label" for="played_nationally">Played Nationally</label>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3 mt-1">
+            <div class="col-md-4">
+                <label class="form-label">Conference Strength: <strong id="conference_strength_val">5</strong>/10</label>
+                <input type="range" class="form-range" name="conference_strength" id="conference_strength" min="1" max="10" value="5">
+                <div class="rating-label"><span>Weak</span><span>Elite</span></div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Schedule Strength: <strong id="schedule_strength_val">5</strong>/10</label>
+                <input type="range" class="form-range" name="schedule_strength" id="schedule_strength" min="1" max="10" value="5">
+                <div class="rating-label"><span>Weak</span><span>Elite</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-warning btn-lg"><i class="bi bi-check-lg"></i> Save Player</button>
+        <a href="/players" class="btn btn-outline-secondary btn-lg">Cancel</a>
+    </div>
+</form>
+{% endblock %}

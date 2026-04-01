@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}HoopScout — Browse by HS Division{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2 class="fw-bold">Browse by HS Division</h2>
+        <p class="text-muted">Players organized by high school classification</p>
+    </div>
+</div>
+
+{% if divisions %}
+<div class="row g-3">
+    {% for d in divisions %}
+    <div class="col-md-3 col-sm-4 col-6">
+        <a href="/players?hs_division={{ d.division }}" class="text-decoration-none">
+            <div class="stat-card">
+                <div class="stat-value" style="font-size:1.4rem;">{{ d.division }}</div>
+                <div class="stat-label">{{ d.cnt }} player{{ 's' if d.cnt != 1 }}</div>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+    <i class="bi bi-building" style="font-size: 3rem; color: #8b949e;"></i>
+    <p class="text-muted mt-3">No division data yet. Add players with their HS classification.</p>
+</div>
+{% endif %}
+{% endblock %}

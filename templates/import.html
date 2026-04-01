@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}HoopScout — Import Players{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2 class="fw-bold">Import Players via CSV</h2>
+        <p class="text-muted">Upload a CSV file or paste CSV data to bulk-import players</p>
+    </div>
+</div>
+
+<!-- Flash messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for cat, msg in messages %}
+<div class="alert alert-{{ cat }} alert-dismissible fade show" role="alert">
+    {{ msg }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+{% if imported is not none %}
+<div class="card p-4 mb-4">
+    <h5 class="mb-3">Import Results</h5>
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-value text-success">{{ imported }}</div>
+                <div class="stat-label">Imported</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-value text-danger">{{ skipped }}</div>
+                <div class="stat-label">Skipped</div>
+            </div>
+        </div>
+    </div>
+    {% if errors %}
+    <div class="mt-3">
+        <h6 class="text-muted">Errors:</h6>
+        {% for err in errors %}
+        <div class="small text-danger">{{ err }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<form method="post" action="/import" enctype="multipart/form-data">
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3"><i class="bi bi-file-earmark-arrow-up"></i> Upload CSV File</h5>
+        <input type="file" class="form-control" name="csv_file" accept=".csv,.txt,.tsv">
+    </div>
+
+    <div class="text-center my-3 text-muted">— OR —</div>
+
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3"><i class="bi bi-clipboard"></i> Paste CSV Data</h5>
+        <textarea class="form-control" name="csv_text" rows="10"
+                  placeholder="first_name,last_name,position,height,weight,grad_year,high_school,city,state,gpa,ppg,rpg,apg,spg,bpg,fg%,3pt%,ft%,gp,mpg,division"></textarea>
+    </div>
+
+    <div class="d-flex gap-2 mb-4">
+        <button type="submit" class="btn btn-warning btn-lg"><i class="bi bi-upload"></i> Import</button>
+        <a href="/players" class="btn btn-outline-secondary btn-lg">Cancel</a>
+    </div>
+</form>
+
+<!-- Column guide -->
+<div class="card p-4 mb-4">
+    <h5 class="mb-3"><i class="bi bi-info-circle"></i> CSV Column Guide</h5>
+    <p class="text-muted small">Your CSV headers are matched flexibly. Use any of these column names:</p>
+    <div class="table-responsive">
+        <table class="table table-sm">
+            <thead><tr><th>Field</th><th>Accepted Column Names</th><th>Required?</th><th>Example</th></tr></thead>
+            <tbody>
+                <tr><td>First Name</td><td><code>first_name, first, fname</code></td><td class="text-warning">Yes</td><td>Jaylen</td></tr>
+                <tr><td>Last Name</td><td><code>last_name, last, lname</code></td><td class="text-warning">Yes</td><td>Williams</td></tr>
+                <tr><td>Position</td><td><code>position, pos</code></td><td>No</td><td>PG, SG, SF, PF, C</td></tr>
+                <tr><td>Height</td><td><code>height, ht</code></td><td>No</td><td>6'2, 6-2, or 74</td></tr>
+                <tr><td>Weight</td><td><code>weight, wt</code></td><td>No</td><td>185</td></tr>
+                <tr><td>Class Year</td><td><code>grad_year, class, year</code></td><td>No</td><td>2026</td></tr>
+                <tr><td>High School</td><td><code>high_school, school, hs</code></td><td>No</td><td>Montverde Academy</td></tr>
+                <tr><td>City</td><td><code>city</code></td><td>No</td><td>Orlando</td></tr>
+                <tr><td>State</td><td><code>state, st</code></td><td>No</td><td>FL</td></tr>
+                <tr><td>GPA</td><td><code>gpa</code></td><td>No</td><td>3.5</td></tr>
+                <tr><td>AAU</td><td><code>aau_program, aau, travel_team</code></td><td>No</td><td>Team Final</td></tr>
+                <tr><td>HS Division</td><td><code>hs_division, division, classification</code></td><td>No</td><td>6A, Prep School</td></tr>
+                <tr><td>PPG</td><td><code>ppg, pts, points</code></td><td>No</td><td>18.5</td></tr>
+                <tr><td>RPG</td><td><code>rpg, reb, rebounds</code></td><td>No</td><td>7.2</td></tr>
+                <tr><td>APG</td><td><code>apg, ast, assists</code></td><td>No</td><td>4.1</td></tr>
+                <tr><td>SPG</td><td><code>spg, stl, steals</code></td><td>No</td><td>1.8</td></tr>
+                <tr><td>BPG</td><td><code>bpg, blk, blocks</code></td><td>No</td><td>0.5</td></tr>
+                <tr><td>FG%</td><td><code>fg_pct, fg%, fg</code></td><td>No</td><td>47.5</td></tr>
+                <tr><td>3PT%</td><td><code>three_pct, 3pt%, 3pt</code></td><td>No</td><td>35.0</td></tr>
+                <tr><td>FT%</td><td><code>ft_pct, ft%, ft</code></td><td>No</td><td>78.0</td></tr>
+                <tr><td>Games</td><td><code>games_played, gp, games</code></td><td>No</td><td>28</td></tr>
+                <tr><td>Minutes</td><td><code>minutes_pg, mpg, minutes</code></td><td>No</td><td>32.5</td></tr>
+                <tr><td>Turnovers</td><td><code>topg, to, turnovers</code></td><td>No</td><td>2.3</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p class="text-muted small mt-2">
+        <strong>Tip:</strong> Only first and last name are required. Everything else is optional — fill in what you have.
+        Eye-test ratings (athleticism, intangibles) are entered via scout evaluations after import.
+    </p>
+</div>
+
+<!-- Danger zone -->
+<div class="card p-4 border-danger">
+    <h5 class="text-danger mb-3"><i class="bi bi-exclamation-triangle"></i> Danger Zone</h5>
+    <p class="text-muted small">Clear all players from the database to start fresh.</p>
+    <form method="post" action="/clear-db" class="delete-form">
+        <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Clear Entire Database</button>
+    </form>
+</div>
+{% endblock %}

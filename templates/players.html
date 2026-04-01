@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}HoopScout — Players{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2 class="fw-bold">Players</h2>
+        <p class="text-muted">{{ players|length }} player{{ 's' if players|length != 1 }} found</p>
+    </div>
+    <div class="col-auto">
+        <a href="/players/add" class="btn btn-warning"><i class="bi bi-person-plus"></i> Add Player</a>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card p-3 mb-4">
+    <form method="get" action="/players" class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label">Search</label>
+            <input type="text" class="form-control" name="q" value="{{ query }}" placeholder="Name, school, AAU...">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Position</label>
+            <select class="form-select" name="position">
+                <option value="">All</option>
+                {% for pos in positions %}
+                <option value="{{ pos }}" {{ 'selected' if position == pos }}>{{ pos }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">State</label>
+            <select class="form-select" name="state">
+                <option value="">All</option>
+                {% for st in us_states %}
+                <option value="{{ st }}" {{ 'selected' if state == st }}>{{ st }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Class Year</label>
+            <select class="form-select" name="grad_year">
+                <option value="">All</option>
+                {% for y in years %}
+                <option value="{{ y }}" {{ 'selected' if grad_year|string == y|string }}>{{ y }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">HS Division</label>
+            <select class="form-select" name="hs_division">
+                <option value="">All</option>
+                {% for div in hs_divisions %}
+                <option value="{{ div }}" {{ 'selected' if hs_division == div }}>{{ div }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-warning w-100"><i class="bi bi-funnel"></i></button>
+        </div>
+    </form>
+</div>
+
+<!-- Sort bar -->
+<div class="d-flex gap-2 mb-3">
+    <span class="text-muted small align-self-center">Sort by:</span>
+    {% for s, label in [('name','Name'),('position','Position'),('state','State'),('year','Class'),('division','HS Division')] %}
+    <a href="/players?q={{ query }}&position={{ position }}&state={{ state }}&grad_year={{ grad_year }}&hs_division={{ hs_division }}&sort={{ s }}"
+       class="btn btn-sm {{ 'btn-warning' if sort_by == s else 'btn-outline-secondary' }}">{{ label }}</a>
+    {% endfor %}
+</div>
+
+<!-- Player Table -->
+{% if players %}
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Pos</th>
+                    <th>Height</th>
+                    <th>High School</th>
+                    <th>HS Division</th>
+                    <th>State</th>
+                    <th>Class</th>
+                    <th>AAU</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in players %}
+                <tr onclick="location.href='/players/{{ p.id }}'" style="cursor:pointer">
+                    <td class="fw-bold">{{ p.first_name }} {{ p.last_name }}</td>
+                    <td><span class="pos-badge pos-{{ p.position }}">{{ p.position }}</span></td>
+                    <td>{{ height_to_display(p.height_inches) }}</td>
+                    <td>{{ p.high_school or '—' }}</td>
+                    <td>{{ p.school_classification or '—' }}</td>
+                    <td>{{ p.state or '—' }}</td>
+                    <td>{{ p.grad_year }}</td>
+                    <td>{{ p.aau_program or '—' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="text-center py-5">
+    <i class="bi bi-search" style="font-size: 3rem; color: #8b949e;"></i>
+    <p class="text-muted mt-3">No players match your filters.</p>
+    <a href="/players" class="btn btn-outline-secondary">Clear Filters</a>
+</div>
+{% endif %}
+{% endblock %}

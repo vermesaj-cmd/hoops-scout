@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}HoopScout — Evaluate {{ data.player.first_name }} {{ data.player.last_name }}{% endblock %}
+
+{% block content %}
+{% set p = data.player %}
+
+<div class="row mb-4">
+    <div class="col">
+        <h2 class="fw-bold">Scout Evaluation</h2>
+        <p class="text-muted">
+            <span class="pos-badge pos-{{ p.position }}">{{ p.position }}</span>
+            {{ p.first_name }} {{ p.last_name }} &middot;
+            {{ height_to_display(p.height_inches) }} &middot;
+            {{ p.high_school or '—' }}, {{ p.state or '—' }} &middot;
+            Class of {{ p.grad_year }}
+        </p>
+        {% if data.eval_data.num_evaluations > 0 %}
+        <span class="badge bg-secondary">{{ data.eval_data.num_evaluations }} existing evaluation{{ 's' if data.eval_data.num_evaluations != 1 }}</span>
+        {% endif %}
+    </div>
+</div>
+
+<form method="post" action="/players/{{ p.id }}/evaluate">
+    <!-- Scout Info -->
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3"><i class="bi bi-person-badge"></i> Scout Info</h5>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Your Name *</label>
+                <input type="text" class="form-control" name="scout_name" required placeholder="e.g. Coach Mike Johnson">
+            </div>
+        </div>
+    </div>
+
+    <!-- Athleticism -->
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3"><i class="bi bi-lightning"></i> Athleticism</h5>
+        <p class="text-muted small">Rate each attribute 1-10 based on what you've observed</p>
+        <div class="row g-3">
+            {% for attr, label, hint in [
+                ('speed', 'Speed / Quickness', 'First step, transition speed, lateral quickness'),
+                ('vertical', 'Vertical / Explosiveness', 'Leaping ability, above-rim play'),
+                ('agility', 'Agility / Change of Direction', 'Ability to cut, stop-and-go, defensive slides'),
+                ('strength', 'Strength / Physicality', 'Body strength, ability to absorb contact, post play'),
+                ('endurance', 'Endurance / Motor', 'Stamina, ability to play heavy minutes without fading')
+            ] %}
+            <div class="col-md-4">
+                <label class="form-label">{{ label }}: <strong id="{{ attr }}_val">5</strong>/10</label>
+                <input type="range" class="form-range" name="{{ attr }}" id="{{ attr }}" min="1" max="10" value="5">
+                <div class="rating-label"><span>Poor</span><span>Elite</span></div>
+                <small class="text-muted">{{ hint }}</small>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="row g-3 mt-2">
+            <div class="col-md-3">
+                <label class="form-label">Vertical (inches)</label>
+                <input type="number" class="form-control" name="vertical_inches" step="0.5" placeholder="If measured">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Lane Agility (sec)</label>
+                <input type="number" class="form-control" name="lane_agility_sec" step="0.01" placeholder="If measured">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">3/4 Court Sprint (sec)</label>
+                <input type="number" class="form-control" name="sprint_sec" step="0.01" placeholder="If measured">
+            </div>
+        </div>
+    </div>
+
+    <!-- Intangibles -->
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3"><i class="bi bi-brain"></i> Intangibles</h5>
+        <p class="text-muted small">Rate each attribute 1-10 based on what you've observed</p>
+        <div class="row g-3">
+            {% for attr, label, hint in [
+                ('basketball_iq', 'Basketball IQ', 'Court awareness, reads defenses, makes smart decisions'),
+                ('motor', 'Motor / Effort', 'Plays hard every possession, hustles for loose balls'),
+                ('coachability', 'Coachability', 'Listens, applies feedback, adjusts during games'),
+                ('leadership', 'Leadership', 'Vocal, leads by example, makes teammates better'),
+                ('clutch', 'Clutch / Composure', 'Performs under pressure, wants the ball late in games'),
+                ('defensive_instincts', 'Defensive Instincts', 'Anticipation, help defense, on-ball pressure')
+            ] %}
+            <div class="col-md-4">
+                <label class="form-label">{{ label }}: <strong id="{{ attr }}_val">5</strong>/10</label>
+                <input type="range" class="form-range" name="{{ attr }}" id="{{ attr }}" min="1" max="10" value="5">
+                <div class="rating-label"><span>Poor</span><span>Elite</span></div>
+                <small class="text-muted">{{ hint }}</small>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Competition Assessment -->
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3"><i class="bi bi-trophy"></i> Competition Level Assessment</h5>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Conference Strength: <strong id="conference_strength_val">5</strong>/10</label>
+                <input type="range" class="form-range" name="conference_strength" id="conference_strength" min="1" max="10" value="5">
+                <div class="rating-label"><span>Weak</span><span>Elite</span></div>
+                <small class="text-muted">How strong is their HS conference/league?</small>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Schedule Strength: <strong id="schedule_strength_val">5</strong>/10</label>
+                <input type="range" class="form-range" name="schedule_strength" id="schedule_strength" min="1" max="10" value="5">
+                <div class="rating-label"><span>Weak</span><span>Elite</span></div>
+                <small class="text-muted">Quality of opponents on their schedule / tournaments</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3"><i class="bi bi-journal-text"></i> Evaluation Notes</h5>
+        <textarea class="form-control" name="notes" rows="4" placeholder="Overall impressions, strengths, weaknesses, projection thoughts..."></textarea>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-warning btn-lg"><i class="bi bi-check-lg"></i> Submit Evaluation</button>
+        <a href="/players/{{ p.id }}" class="btn btn-outline-secondary btn-lg">Cancel</a>
+    </div>
+</form>
+{% endblock %}

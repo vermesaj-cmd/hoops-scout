@@ -1,0 +1,375 @@
+{% extends "base.html" %}
+{% block title %}HoopScout — {{ data.player.first_name }} {{ data.player.last_name }}{% endblock %}
+
+{% block content %}
+{% set p = data.player %}
+{% set proj = projection %}
+{% set scores = proj.scores %}
+{% set ev = data.eval_data %}
+{% set avgs = ev.averages %}
+
+<!-- Flash messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for cat, msg in messages %}
+<div class="alert alert-{{ cat }} alert-dismissible fade show" role="alert">
+    {{ msg }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<!-- Header -->
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <div class="d-flex align-items-center gap-3">
+            <span class="pos-badge pos-{{ p.position }}" style="width:48px;height:48px;line-height:48px;font-size:1.1rem;">{{ p.position }}</span>
+            <div>
+                <h2 class="fw-bold mb-0">{{ p.first_name }} {{ p.last_name }}</h2>
+                <span class="text-muted">
+                    {{ height_to_display(p.height_inches) }}
+                    {% if p.weight %} &middot; {{ p.weight }} lbs{% endif %}
+                    {% if p.wingspan_inches %} &middot; {{ height_to_display(p.wingspan_inches) }} wingspan{% endif %}
+                    &middot; Class of {{ p.grad_year }}
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="col-auto d-flex gap-2">
+        <a href="/players/{{ p.id }}/evaluate" class="btn btn-warning"><i class="bi bi-clipboard-check"></i> Scout This Player</a>
+        <a href="/players/{{ p.id }}/edit" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i> Edit Info</a>
+        <a href="/compare?ids={{ p.id }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left-right"></i> Compare</a>
+        <form method="post" action="/players/{{ p.id }}/delete" class="delete-form d-inline">
+            <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash"></i></button>
+        </form>
+    </div>
+</div>
+
+<!-- Player Info Bar -->
+<div class="card p-3 mb-4">
+    <div class="row text-center">
+        <div class="col">
+            <small class="text-muted d-block">School</small>
+            <strong>{{ p.high_school or '—' }}</strong>
+        </div>
+        <div class="col">
+            <small class="text-muted d-block">City/State</small>
+            <strong>{{ p.city or '' }}{% if p.city and p.state %}, {% endif %}{{ p.state or '—' }}</strong>
+        </div>
+        <div class="col">
+            <small class="text-muted d-block">AAU</small>
+            <strong>{{ p.aau_program or '—' }}</strong>
+        </div>
+        <div class="col">
+            <small class="text-muted d-block">GPA</small>
+            <strong>{{ p.gpa or '—' }}</strong>
+        </div>
+        {% if data.competition %}
+        <div class="col">
+            <small class="text-muted d-block">HS Division</small>
+            <strong>{{ data.competition.school_classification or '—' }}</strong>
+        </div>
+        <div class="col">
+            <small class="text-muted d-block">State Rank</small>
+            <strong>{{ data.competition.state_rank or '—' }}</strong>
+        </div>
+        {% endif %}
+        <div class="col">
+            <small class="text-muted d-block">Scout Evals</small>
+            <strong>{{ ev.num_evaluations }}</strong>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column: Projection -->
+    <div class="col-lg-5">
+        <!-- Composite Score & Tier -->
+        <div class="card p-4 mb-4 text-center">
+            <h5 class="text-uppercase text-muted mb-3">Projection</h5>
+            <div class="mb-3">
+                <div style="font-size: 3.5rem; font-weight: 800; color: var(--hs-orange);">{{ scores.composite }}</div>
+                <div class="text-muted">Composite Score</div>
+            </div>
+            <div class="mb-3">
+                <span class="tier-badge tier-{{ proj.tier }}">TIER {{ proj.tier }} — {{ proj.tier_label }}</span>
+            </div>
+            {% if not scores.scouted %}
+            <div class="alert alert-secondary py-2 px-3 mt-2 small">
+                <i class="bi bi-exclamation-triangle"></i> <strong>PRELIMINARY</strong> — Stats &amp; size only.
+                <a href="/players/{{ p.id }}/evaluate" class="text-warning">Submit a scouting evaluation</a> to refine this projection.
+            </div>
+            {% else %}
+            <div class="mt-2 small text-success">
+                <i class="bi bi-check-circle"></i> Based on {{ ev.num_evaluations }} scout evaluation{{ 's' if ev.num_evaluations != 1 }}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Score Breakdown -->
+        <div class="card p-4 mb-4">
+            <h6 class="text-uppercase text-muted mb-3">Score Breakdown</h6>
+            {% for label, key, score in [
+                ('Production', 'production', scores.production),
+                ('Adj. Production', 'adjusted_production', scores.adjusted_production),
+                ('Size & Measurables', 'size', scores.size),
+                ('Athleticism', 'athleticism', scores.athleticism),
+                ('Intangibles', 'intangibles', scores.intangibles)
+            ] %}
+            <div class="mb-3">
+                <div class="d-flex justify-content-between">
+                    <span>{{ label }}{% if not scores.scouted and key in ['athleticism', 'intangibles'] %} <small class="text-muted">(unscouted)</small>{% endif %}</span>
+                    <strong>{{ score }}</strong>
+                </div>
+                <div class="score-bar-wrap">
+                    <div class="score-bar {{ 'high' if score >= 70 else ('mid' if score >= 45 else 'low') }}"
+                         style="width: {{ score }}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="mt-2 small text-muted">
+                Competition multiplier: <strong>{{ scores.competition_multiplier }}x</strong>
+            </div>
+        </div>
+
+        <!-- Suggested Schools -->
+        <div class="card p-4">
+            <h6 class="text-uppercase text-muted mb-3"><i class="bi bi-mortarboard"></i> Suggested Schools</h6>
+            {% for school in proj.suggested_schools %}
+            <div class="school-card d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="school-name">{{ school.name }}</div>
+                    <div class="school-conf">{{ school.conference }} &middot; {{ school.state }} &middot; {{ school.style }}</div>
+                </div>
+                <span class="tier-badge tier-{{ school.tier }}" style="font-size:0.7rem; padding:0.2rem 0.5rem;">T{{ school.tier }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Right Column: Stats, Evaluations, Notes -->
+    <div class="col-lg-7">
+        <!-- Season Stats -->
+        <div class="card p-4 mb-4">
+            <h6 class="text-uppercase text-muted mb-3"><i class="bi bi-bar-chart"></i> Season Stats</h6>
+            {% if data.stats %}
+            <div class="table-responsive">
+                <table class="table table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th>Season</th><th>GP</th><th>MPG</th><th>PPG</th><th>RPG</th>
+                            <th>APG</th><th>SPG</th><th>BPG</th><th>FG%</th><th>3P%</th><th>FT%</th><th>TO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in data.stats %}
+                        <tr>
+                            <td>{{ s.season }}</td><td>{{ s.games_played }}</td><td>{{ s.minutes_pg }}</td>
+                            <td class="fw-bold">{{ s.ppg }}</td><td>{{ s.rpg }}</td><td>{{ s.apg }}</td>
+                            <td>{{ s.spg }}</td><td>{{ s.bpg }}</td>
+                            <td>{{ s.fg_pct }}%</td><td>{{ s.three_pct }}%</td><td>{{ s.ft_pct }}%</td>
+                            <td>{{ s.topg }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted mb-0">No stats recorded.</p>
+            {% endif %}
+        </div>
+
+        <!-- Scout Evaluations: Averages -->
+        <div class="card p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="text-uppercase text-muted mb-0">
+                    <i class="bi bi-clipboard-data"></i> Scout Evaluations
+                    {% if ev.num_evaluations > 0 %}
+                    <span class="badge bg-warning text-dark ms-2">{{ ev.num_evaluations }} eval{{ 's' if ev.num_evaluations != 1 }}</span>
+                    {% endif %}
+                </h6>
+                <a href="/players/{{ p.id }}/evaluate" class="btn btn-sm btn-warning"><i class="bi bi-plus"></i> Add Evaluation</a>
+            </div>
+
+            {% if avgs %}
+            <!-- Averaged Ratings -->
+            <h6 class="small text-muted mt-2 mb-2">ATHLETICISM AVERAGES</h6>
+            <div class="row g-3 mb-3">
+                {% for attr, label in [('speed','Speed'),('vertical','Vertical'),('agility','Agility'),('strength','Strength'),('endurance','Endurance')] %}
+                <div class="col-md-4">
+                    <div class="d-flex justify-content-between">
+                        <span>{{ label }}</span>
+                        <strong>{{ avgs[attr] }}/10</strong>
+                    </div>
+                    <div class="score-bar-wrap">
+                        <div class="score-bar {{ 'high' if avgs[attr] >= 7 else ('mid' if avgs[attr] >= 4 else 'low') }}"
+                             style="width: {{ avgs[attr] * 10 }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if avgs.vertical_inches or avgs.lane_agility_sec or avgs.sprint_sec %}
+            <div class="row mb-3">
+                {% if avgs.vertical_inches %}<div class="col-auto"><small class="text-muted">Avg Vert:</small> <strong>{{ avgs.vertical_inches }}"</strong></div>{% endif %}
+                {% if avgs.lane_agility_sec %}<div class="col-auto"><small class="text-muted">Avg Lane Agility:</small> <strong>{{ avgs.lane_agility_sec }}s</strong></div>{% endif %}
+                {% if avgs.sprint_sec %}<div class="col-auto"><small class="text-muted">Avg Sprint:</small> <strong>{{ avgs.sprint_sec }}s</strong></div>{% endif %}
+            </div>
+            {% endif %}
+
+            <h6 class="small text-muted mt-3 mb-2">INTANGIBLES AVERAGES</h6>
+            <div class="row g-3 mb-3">
+                {% for attr, label in [('basketball_iq','Basketball IQ'),('motor','Motor'),('coachability','Coachability'),('leadership','Leadership'),('clutch','Clutch'),('defensive_instincts','Def. Instincts')] %}
+                <div class="col-md-4">
+                    <div class="d-flex justify-content-between">
+                        <span>{{ label }}</span>
+                        <strong>{{ avgs[attr] }}/10</strong>
+                    </div>
+                    <div class="score-bar-wrap">
+                        <div class="score-bar {{ 'high' if avgs[attr] >= 7 else ('mid' if avgs[attr] >= 4 else 'low') }}"
+                             style="width: {{ avgs[attr] * 10 }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <h6 class="small text-muted mt-3 mb-2">COMPETITION AVERAGES</h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="d-flex justify-content-between">
+                        <span>Conf. Strength</span>
+                        <strong>{{ avgs.conference_strength }}/10</strong>
+                    </div>
+                    <div class="score-bar-wrap">
+                        <div class="score-bar {{ 'high' if avgs.conference_strength >= 7 else ('mid' if avgs.conference_strength >= 4 else 'low') }}"
+                             style="width: {{ avgs.conference_strength * 10 }}%"></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex justify-content-between">
+                        <span>Sched. Strength</span>
+                        <strong>{{ avgs.schedule_strength }}/10</strong>
+                    </div>
+                    <div class="score-bar-wrap">
+                        <div class="score-bar {{ 'high' if avgs.schedule_strength >= 7 else ('mid' if avgs.schedule_strength >= 4 else 'low') }}"
+                             style="width: {{ avgs.schedule_strength * 10 }}%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Individual Evaluations Breakdown -->
+            <hr class="border-secondary">
+            <h6 class="small text-muted mt-3 mb-3">INDIVIDUAL EVALUATIONS</h6>
+
+            {% for e in ev.evaluations %}
+            <div class="mb-3 p-3" style="background:#21262d; border-radius:10px;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <strong class="text-warning"><i class="bi bi-person-badge"></i> {{ e.scout_name }}</strong>
+                        <small class="text-muted ms-2">{{ e.eval_date }}</small>
+                    </div>
+                    <form method="post" action="/evaluations/{{ e.id }}/delete" class="delete-form d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger py-0"><i class="bi bi-x"></i></button>
+                    </form>
+                </div>
+
+                <!-- Compact grid of this scout's ratings -->
+                <div class="row g-1">
+                    {% for attr, label in [('speed','SPD'),('vertical','VRT'),('agility','AGL'),('strength','STR'),('endurance','END'),('basketball_iq','IQ'),('motor','MTR'),('coachability','CCH'),('leadership','LDR'),('clutch','CLT'),('defensive_instincts','DEF')] %}
+                    <div class="col-auto">
+                        <div class="text-center px-2 py-1" style="background:#161b22; border-radius:6px; min-width:48px;">
+                            <div class="small text-muted" style="font-size:0.65rem;">{{ label }}</div>
+                            <div class="fw-bold {{ 'text-warning' if e[attr] >= 7 else ('text-info' if e[attr] >= 4 else 'text-danger') }}">
+                                {{ e[attr] }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <div class="col-auto">
+                        <div class="text-center px-2 py-1" style="background:#161b22; border-radius:6px; min-width:48px;">
+                            <div class="small text-muted" style="font-size:0.65rem;">CONF</div>
+                            <div class="fw-bold">{{ e.conference_strength }}</div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="text-center px-2 py-1" style="background:#161b22; border-radius:6px; min-width:48px;">
+                            <div class="small text-muted" style="font-size:0.65rem;">SCHED</div>
+                            <div class="fw-bold">{{ e.schedule_strength }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if e.notes %}
+                <p class="mt-2 mb-0 small text-muted"><i class="bi bi-chat-quote"></i> {{ e.notes }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            {% else %}
+            <div class="text-center py-4">
+                <i class="bi bi-clipboard-x" style="font-size: 2rem; color: #8b949e;"></i>
+                <p class="text-muted mt-2 mb-0">No scout evaluations yet.</p>
+                <a href="/players/{{ p.id }}/evaluate" class="btn btn-warning btn-sm mt-2">
+                    <i class="bi bi-clipboard-check"></i> Be the first to evaluate
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Competition Level -->
+        {% if data.competition %}
+        {% set c = data.competition %}
+        <div class="card p-4 mb-4">
+            <h6 class="text-uppercase text-muted mb-3"><i class="bi bi-trophy"></i> Competition Level</h6>
+            <div class="row">
+                <div class="col-md-3">
+                    <small class="text-muted d-block">HS Division</small>
+                    <strong>{{ c.school_classification or '—' }}</strong>
+                </div>
+                <div class="col-md-2">
+                    <small class="text-muted d-block">AAU Level</small>
+                    <strong>{{ c.aau_circuit_level or '—' }}</strong>
+                </div>
+                <div class="col-md-2">
+                    <small class="text-muted d-block">Played Nationally</small>
+                    <strong>{{ 'Yes' if c.played_nationally else 'No' }}</strong>
+                </div>
+                <div class="col-md-2">
+                    <small class="text-muted d-block">State Rank</small>
+                    <strong>{{ c.state_rank or '—' }}</strong>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Scout Notes -->
+        <div class="card p-4">
+            <h6 class="text-uppercase text-muted mb-3"><i class="bi bi-journal-text"></i> Quick Notes</h6>
+            {% for note in data.notes %}
+            <div class="mb-3 p-3" style="background:#21262d; border-radius:8px;">
+                <div class="d-flex justify-content-between mb-1">
+                    <strong>{{ note.scout_name or 'Anonymous' }}</strong>
+                    <small class="text-muted">{{ note.created_at }}</small>
+                </div>
+                <p class="mb-0">{{ note.note }}</p>
+            </div>
+            {% endfor %}
+
+            <form method="post" action="/players/{{ p.id }}/notes" class="mt-3">
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" name="scout_name" placeholder="Your name">
+                    </div>
+                    <div class="col-md-7">
+                        <input type="text" class="form-control" name="note" placeholder="Quick note..." required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-warning w-100"><i class="bi bi-plus"></i> Add</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
