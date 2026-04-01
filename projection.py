@@ -11,22 +11,22 @@ TIERS = {
     1: {
         "label": "D1 High-Major",
         "conferences": ["ACC", "Big Ten", "Big 12", "SEC", "Big East", "AAC", "Mountain West"],
-        "min_score": 75,
+        "min_score": 72,
     },
     2: {
         "label": "D1 Mid-Major",
         "conferences": ["A-10", "WCC", "MVC", "CAA", "Horizon", "MAC", "Sun Belt", "C-USA"],
-        "min_score": 60,
+        "min_score": 58,
     },
     3: {
         "label": "D1 Low-Major",
         "conferences": ["Patriot", "MAAC", "NEC", "America East", "Big South", "SWAC", "MEAC", "Southland"],
-        "min_score": 48,
+        "min_score": 45,
     },
     4: {
         "label": "Division II",
         "conferences": ["PSAC", "GLIAC", "Lone Star", "Gulf South", "CIAA", "Sunshine State"],
-        "min_score": 35,
+        "min_score": 30,
     },
     5: {
         "label": "D3 / NAIA",
@@ -59,6 +59,30 @@ COMPETITION_MULTIPLIERS = {
     10: 1.20,  # elite (national schedule / top prep)
 }
 
+# ── Classification strength mapping ──────────────────────────────
+# Maps HS classification to a base competition strength score (1-10)
+# Used when no scout evaluations exist to estimate competition level
+CLASSIFICATION_STRENGTH = {
+    "Prep School": 9,
+    "7A": 8, "6A": 7, "5A": 6, "4A": 5, "3A": 5,
+    "2A": 4, "1A": 3,
+    "Class A": 5, "Class B": 4, "Class C": 3, "Class D": 2,
+    "Division I": 7, "Division II": 6, "Division III": 5, "Division IV": 4,
+    "Division 1": 7, "Division 2": 6, "Division 3": 5,
+    "Division II-AA": 6, "Division II-A": 5,
+    "Private/Independent": 6, "Charter": 5, "Public": 5, "Other": 5,
+}
+
+# ── AAU circuit level bonuses ─────────────────────────────────────
+AAU_BONUSES = {
+    "Nike EYBL": 12,
+    "Adidas 3SSB": 10,
+    "Under Armour": 9,
+    "Puma Pro": 8,
+    "Independent/Regional": 3,
+    "None": 0,
+}
+
 # ── School database (sample — expandable) ────────────────────────
 SCHOOLS = [
     # Tier 1 — High Major
@@ -79,6 +103,7 @@ SCHOOLS = [
     {"name": "Auburn", "conference": "SEC", "tier": 1, "state": "AL", "style": "fast-paced"},
     {"name": "Tennessee", "conference": "SEC", "tier": 1, "state": "TN", "style": "defensive"},
     {"name": "Alabama", "conference": "SEC", "tier": 1, "state": "AL", "style": "shooting"},
+    {"name": "Florida", "conference": "SEC", "tier": 1, "state": "FL", "style": "balanced"},
     {"name": "Memphis", "conference": "AAC", "tier": 1, "state": "TN", "style": "athletic"},
     {"name": "San Diego State", "conference": "Mountain West", "tier": 1, "state": "CA", "style": "defensive"},
 
@@ -97,6 +122,8 @@ SCHOOLS = [
     {"name": "Hofstra", "conference": "CAA", "tier": 2, "state": "NY", "style": "fast-paced"},
     {"name": "Toledo", "conference": "MAC", "tier": 2, "state": "OH", "style": "balanced"},
     {"name": "Ohio", "conference": "MAC", "tier": 2, "state": "OH", "style": "fast-paced"},
+    {"name": "UCF", "conference": "Big 12", "tier": 2, "state": "FL", "style": "athletic"},
+    {"name": "USF", "conference": "AAC", "tier": 2, "state": "FL", "style": "athletic"},
 
     # Tier 3 — Low Major
     {"name": "Colgate", "conference": "Patriot", "tier": 3, "state": "NY", "style": "shooting"},
@@ -110,6 +137,9 @@ SCHOOLS = [
     {"name": "UMBC", "conference": "America East", "tier": 3, "state": "MD", "style": "balanced"},
     {"name": "Wagner", "conference": "NEC", "tier": 3, "state": "NY", "style": "balanced"},
     {"name": "Merrimack", "conference": "NEC", "tier": 3, "state": "MA", "style": "physical"},
+    {"name": "FGCU", "conference": "ASUN", "tier": 3, "state": "FL", "style": "athletic"},
+    {"name": "Jacksonville", "conference": "ASUN", "tier": 3, "state": "FL", "style": "balanced"},
+    {"name": "Stetson", "conference": "ASUN", "tier": 3, "state": "FL", "style": "balanced"},
 
     # Tier 4 — D2
     {"name": "Northwest Missouri State", "conference": "MIAA", "tier": 4, "state": "MO", "style": "balanced"},
@@ -120,6 +150,9 @@ SCHOOLS = [
     {"name": "Le Moyne", "conference": "NE-10", "tier": 4, "state": "NY", "style": "balanced"},
     {"name": "Dominican (NY)", "conference": "CACC", "tier": 4, "state": "NY", "style": "fast-paced"},
     {"name": "Pace", "conference": "NE-10", "tier": 4, "state": "NY", "style": "balanced"},
+    {"name": "Nova Southeastern", "conference": "Sunshine State", "tier": 4, "state": "FL", "style": "balanced"},
+    {"name": "Tampa", "conference": "Sunshine State", "tier": 4, "state": "FL", "style": "athletic"},
+    {"name": "Barry", "conference": "Sunshine State", "tier": 4, "state": "FL", "style": "balanced"},
 
     # Tier 5 — D3/NAIA
     {"name": "Randolph-Macon", "conference": "ODAC", "tier": 5, "state": "VA", "style": "balanced"},
@@ -179,7 +212,9 @@ def calc_size_score(player):
     ideal_h, min_h, ideal_ws = SIZE_BENCHMARKS.get(position, (77, 73, 81))
 
     # Height component (0-60)
-    if height >= ideal_h:
+    if height >= ideal_h + 2:
+        h_score = 65  # oversized for position = bonus
+    elif height >= ideal_h:
         h_score = 60
     elif height >= min_h:
         h_score = 35 + 25 * ((height - min_h) / max(1, ideal_h - min_h))
@@ -240,6 +275,38 @@ def _is_scouted(player_data):
     return False
 
 
+def _get_competition_strength(player_data):
+    """
+    Get competition strength from scout evals or estimate from classification/AAU.
+    Returns a multiplier and bonus points.
+    """
+    comp = player_data.get("competition")
+    if not comp:
+        return 0.95, 0
+
+    # Competition multiplier
+    conf_strength = comp.get("conference_strength")
+    sched_strength = comp.get("schedule_strength")
+
+    if conf_strength and sched_strength:
+        avg_comp = (conf_strength + sched_strength) / 2
+    else:
+        # Estimate from classification
+        classification = comp.get("school_classification", "")
+        avg_comp = CLASSIFICATION_STRENGTH.get(classification, 5)
+
+    mult = COMPETITION_MULTIPLIERS.get(round(avg_comp), 0.95)
+
+    # AAU circuit bonus — playing on a top circuit is a major signal
+    aau_level = comp.get("aau_circuit_level", "")
+    aau_bonus = AAU_BONUSES.get(aau_level, 0)
+
+    # Played nationally bonus
+    national_bonus = 6 if comp.get("played_nationally") else 0
+
+    return mult, aau_bonus + national_bonus
+
+
 def calc_composite_score(player_data):
     """
     Calculate the overall composite score.
@@ -248,11 +315,10 @@ def calc_composite_score(player_data):
       - Intangibles:      30%  (IQ, motor, coachability, leadership, clutch, defense)
       - Athleticism:      25%  (speed, vert, agility, strength, endurance)
       - Production:       25%  (stats adjusted by competition)
-      - Size:             10%  (height/wingspan relative to position)
-      - Competition adj:  multiplier on production
+      - Size:             20%  (height/wingspan relative to position)
 
-    PRELIMINARY (unscouted) — stats + size only:
-      - Production: 60%, Size: 40%
+    PRELIMINARY (unscouted) — stats + size + competition context:
+      - Production: 45%, Size: 30%, Competition context bonus added
     """
     production = calc_production_score(player_data.get("stats"))
     size = calc_size_score(player_data.get("player", {}))
@@ -260,16 +326,7 @@ def calc_composite_score(player_data):
     intangibles = calc_intangibles_score(player_data.get("intangibles"))
 
     scouted = _is_scouted(player_data)
-
-    # Competition multiplier adjusts production
-    comp = player_data.get("competition")
-    if comp:
-        conf_strength = comp.get("conference_strength", 5) or 5
-        sched_strength = comp.get("schedule_strength", 5) or 5
-        avg_comp = (conf_strength + sched_strength) / 2
-        mult = COMPETITION_MULTIPLIERS.get(round(avg_comp), 0.95)
-    else:
-        mult = 0.95
+    mult, context_bonus = _get_competition_strength(player_data)
 
     adjusted_production = min(100, production * mult)
 
@@ -279,18 +336,20 @@ def calc_composite_score(player_data):
             intangibles * 0.30
             + athleticism * 0.25
             + adjusted_production * 0.25
-            + size * 0.10
+            + size * 0.20
         )
     else:
-        # Stats-only preliminary projection
+        # Preliminary projection — stats + size + competition context
+        # Context bonus (AAU level + national play) accounts for what stats alone miss:
+        # A role player at Montverde with Nike EYBL experience is way better than
+        # a stat-stuffer at a tiny school
         composite = (
-            adjusted_production * 0.60
-            + size * 0.40
+            adjusted_production * 0.45
+            + size * 0.30
         )
 
-    # Bonus for played nationally in AAU
-    if comp and comp.get("played_nationally"):
-        composite += 4
+    # Add competition context bonus (AAU circuit + national play)
+    composite += context_bonus
 
     composite = min(100, composite)
 
@@ -302,16 +361,17 @@ def calc_composite_score(player_data):
         "athleticism": round(athleticism, 1),
         "intangibles": round(intangibles, 1),
         "competition_multiplier": round(mult, 2),
+        "context_bonus": context_bonus,
         "scouted": scouted,
     }
 
 
 def get_tier(composite_score):
-    """Return the tier number and label for a given composite score."""
+    """Return the best tier (lowest number) the score qualifies for."""
     for tier_num in sorted(TIERS.keys()):
         if composite_score >= TIERS[tier_num]["min_score"]:
-            result = tier_num
-    return result, TIERS[result]["label"]
+            return tier_num, TIERS[tier_num]["label"]
+    return 5, TIERS[5]["label"]
 
 
 def suggest_schools(player_data, scores, tier, limit=8):
