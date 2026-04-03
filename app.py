@@ -10,6 +10,20 @@ app.secret_key = "hoopscout-dev-key"
 # Initialize database on import (needed for gunicorn)
 init_db()
 
+# Auto-seed if database is empty (needed for Render where DB resets on deploy)
+def _auto_seed():
+    try:
+        conn = get_db()
+        count = conn.execute("SELECT COUNT(*) FROM players").fetchone()[0]
+        conn.close()
+        if count == 0:
+            from seed_florida_current import seed_florida
+            seed_florida()
+    except Exception:
+        pass
+
+_auto_seed()
+
 US_STATES = [
     "AL","AK","AZ","AR","CA","CO","CT","DC","DE","FL","GA","HI","ID","IL","IN",
     "IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH",
